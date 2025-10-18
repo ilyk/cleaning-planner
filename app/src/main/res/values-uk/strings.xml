@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Планувальник Прибирання</string>
+    
+    <!-- Common -->
+    <string name="ok">Гаразд</string>
+    <string name="cancel">Скасувати</string>
+    <string name="retry">Повторити</string>
+    <string name="loading">Завантаження…</string>
+    <string name="error_generic">Щось пішло не так</string>
+    
+    <!-- Auth -->
+    <string name="login">Увійти</string>
+    <string name="email">Електронна пошта</string>
+    <string name="password">Пароль</string>
+    
+    <!-- Home -->
+    <string name="board">Дошка</string>
+    <string name="rooms">Кімнати</string>
+    <string name="settings">Налаштування</string>
+    
+    <!-- Tasks -->
+    <string name="task_status_todo">Зробити</string>
+    <string name="task_status_doing">Виконується</string>
+    <string name="task_status_done">Готово</string>
+    <string name="task_status_skipped">Пропущено</string>
+    
+    <!-- Board -->
+    <string name="today">Сьогодні</string>
+    <string name="upcoming">Заплановані</string>
+    <string name="completed">Завершені</string>
+    
+    <!-- Rooms -->
+    <string name="add_room">Додати Кімнату</string>
+    <string name="room_name">Назва Кімнати</string>
+    
+    <!-- QR -->
+    <string name="scan_qr">Сканувати QR-код</string>
+    <string name="start">Почати</string>
+    <string name="skip">Пропустити</string>
+    <string name="done">Готово</string>
+    
+    <!-- Settings -->
+    <string name="language">Мова</string>
+    <string name="notifications">Сповіщення</string>
+    <string name="household_settings">Налаштування Домогосподарства</string>
+    <string name="members">Учасники</string>
+</resources>
+

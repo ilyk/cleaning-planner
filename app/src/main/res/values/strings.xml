@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cleaning Planner</string>
+    
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong</string>
+    
+    <!-- Auth -->
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    
+    <!-- Home -->
+    <string name="board">Board</string>
+    <string name="rooms">Rooms</string>
+    <string name="settings">Settings</string>
+    
+    <!-- Tasks -->
+    <string name="task_status_todo">To Do</string>
+    <string name="task_status_doing">Doing</string>
+    <string name="task_status_done">Done</string>
+    <string name="task_status_skipped">Skipped</string>
+    
+    <!-- Board -->
+    <string name="today">Today</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="completed">Completed</string>
+    
+    <!-- Rooms -->
+    <string name="add_room">Add Room</string>
+    <string name="room_name">Room Name</string>
+    
+    <!-- QR -->
+    <string name="scan_qr">Scan QR Code</string>
+    <string name="start">Start</string>
+    <string name="skip">Skip</string>
+    <string name="done">Done</string>
+    
+    <!-- Settings -->
+    <string name="language">Language</string>
+    <string name="notifications">Notifications</string>
+    <string name="household_settings">Household Settings</string>
+    <string name="members">Members</string>
+</resources>
+
