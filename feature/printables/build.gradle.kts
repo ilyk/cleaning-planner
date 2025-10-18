@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.feature.printables"
+    namespace = "com.ilyk.cleaningplanner.feature.printables"
     compileSdk = 35
 
     defaultConfig {

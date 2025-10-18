@@ -32,7 +32,7 @@ planner/
 │   ├── proguard-rules.pro                 # ProGuard rules
 │   └── src/main/
 │       ├── AndroidManifest.xml            # App manifest with deep links
-│       ├── kotlin/com/redasgard/cleaningplanner/
+│       ├── kotlin/com/ilyk/cleaningplanner/
 │       │   ├── CleaningPlannerApplication.kt    # App class with Hilt
 │       │   ├── MainActivity.kt                   # Main activity
 │       │   ├── navigation/

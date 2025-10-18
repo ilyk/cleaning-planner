@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.feature.settings"
+    namespace = "com.ilyk.cleaningplanner.feature.settings"
     compileSdk = 35
 
     defaultConfig {

@@ -29,21 +29,37 @@
     <string name="today">Today</string>
     <string name="upcoming">Upcoming</string>
     <string name="completed">Completed</string>
+    <string name="board_coming_soon">Board - Coming soon</string>
     
     <!-- Rooms -->
     <string name="add_room">Add Room</string>
     <string name="room_name">Room Name</string>
+    <string name="rooms_coming_soon">Rooms - Coming soon</string>
+    <string name="room_slug">Slug: %1$s</string>
+    <string name="open">Open</string>
+    <string name="qr">QR</string>
     
     <!-- QR -->
-    <string name="scan_qr">Scan QR Code</string>
+    <string name="scan_qr">Scan QR</string>
     <string name="start">Start</string>
     <string name="skip">Skip</string>
     <string name="done">Done</string>
+    <string name="camera_permission_required">Camera permission required</string>
+    <string name="back">Back</string>
+    
+    <!-- Quick Form -->
+    <string name="quick_action">Quick action: %1$s</string>
+    <string name="minutes">Minutes</string>
+    <string name="comments">Comments</string>
+    <string name="comment_ran_out_detergent">Ran out of detergent</string>
+    <string name="comment_low_trash_bags">Low trash bags</string>
+    <string name="comment_blocked_access">Blocked access</string>
     
     <!-- Settings -->
     <string name="language">Language</string>
     <string name="notifications">Notifications</string>
     <string name="household_settings">Household Settings</string>
     <string name="members">Members</string>
+    <string name="settings_coming_soon">Settings - Coming soon</string>
 </resources>
 

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.feature.kidmode"
+    namespace = "com.ilyk.cleaningplanner.feature.kidmode"
     compileSdk = 35
 
     defaultConfig {

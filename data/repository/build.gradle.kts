@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.data.repository"
+    namespace = "com.ilyk.cleaningplanner.data.repository"
     compileSdk = 35
 
     defaultConfig {

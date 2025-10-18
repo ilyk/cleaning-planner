@@ -6,7 +6,7 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Keep data classes for serialization
--keepclassmembers class com.redasgard.cleaningplanner.core.model.** {
+-keepclassmembers class com.ilyk.cleaningplanner.core.model.** {
     *;
 }
 
@@ -31,11 +31,11 @@
 -keepclasseswithmembers class kotlinx.serialization.json.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keep,includedescriptorclasses class com.redasgard.cleaningplanner.**$$serializer { *; }
--keepclassmembers class com.redasgard.cleaningplanner.** {
+-keep,includedescriptorclasses class com.ilyk.cleaningplanner.**$$serializer { *; }
+-keepclassmembers class com.ilyk.cleaningplanner.** {
     *** Companion;
 }
--keepclasseswithmembers class com.redasgard.cleaningplanner.** {
+-keepclasseswithmembers class com.ilyk.cleaningplanner.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 

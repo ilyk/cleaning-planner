@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.data.database"
+    namespace = "com.ilyk.cleaningplanner.data.database"
     compileSdk = 35
 
     defaultConfig {
@@ -33,6 +34,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     // Room
     implementation(libs.room.runtime)

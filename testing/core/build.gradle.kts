@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.redasgard.cleaningplanner.testing.core"
+    namespace = "com.ilyk.cleaningplanner.testing.core"
     compileSdk = 35
 
     defaultConfig {
