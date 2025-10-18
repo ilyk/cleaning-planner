@@ -71,6 +71,7 @@ dependencies {
 
     // Feature modules
     implementation(project(":feature:auth"))
+    implementation(project(":feature:clara"))
     implementation(project(":feature:household"))
     implementation(project(":feature:rooms"))
     implementation(project(":feature:qr"))

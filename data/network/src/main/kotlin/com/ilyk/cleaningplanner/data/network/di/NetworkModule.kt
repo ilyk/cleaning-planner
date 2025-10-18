@@ -2,6 +2,7 @@ package com.ilyk.cleaningplanner.data.network.di
 
 import com.ilyk.cleaningplanner.data.network.api.AuthApi
 import com.ilyk.cleaningplanner.data.network.api.HouseholdApi
+import com.ilyk.cleaningplanner.data.network.api.OpenAIApi
 import com.ilyk.cleaningplanner.data.network.api.RoomApi
 import com.ilyk.cleaningplanner.data.network.api.TaskApi
 import com.ilyk.cleaningplanner.data.network.api.TemplateApi
@@ -16,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -94,5 +96,30 @@ object NetworkModule {
     fun provideTemplateApi(retrofit: Retrofit): TemplateApi {
         return retrofit.create(TemplateApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    @OpenAIRetrofit
+    fun provideOpenAIRetrofit(
+        okHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl("https://api.openai.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOpenAIApi(@OpenAIRetrofit retrofit: Retrofit): OpenAIApi {
+        return retrofit.create(OpenAIApi::class.java)
+    }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OpenAIRetrofit
 

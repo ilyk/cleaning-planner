@@ -5,11 +5,21 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ilyk.cleaningplanner.feature.clara.ui.intake.ChatIntakeScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.intake.TypeIntakeScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.settings.AIAssistantSettingsScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.welcome.WelcomeScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.wizard.WizardScreen
 import com.ilyk.cleaningplanner.ui.home.HomeScreen
 import com.ilyk.cleaningplanner.ui.splash.SplashScreen
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
+    data object Welcome : Screen("welcome")
+    data object ChatIntake : Screen("chat_intake")
+    data object TypeIntake : Screen("type_intake")
+    data object Wizard : Screen("wizard")
+    data object AISettings : Screen("ai_settings")
     data object Home : Screen("home")
     data object Auth : Screen("auth")
     data object HouseholdSelect : Screen("household_select")
@@ -34,19 +44,64 @@ fun CleaningPlannerNavHost(
                     }
                 },
                 onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
+                    navController.navigate(Screen.Welcome.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 }
             )
         }
 
+        composable(Screen.Welcome.route) {
+            WelcomeScreen(
+                onNavigateToChat = {
+                    navController.navigate(Screen.ChatIntake.route)
+                },
+                onNavigateToTypeInfo = {
+                    navController.navigate(Screen.TypeIntake.route)
+                },
+                onNavigateToWizard = {
+                    navController.navigate(Screen.Wizard.route)
+                }
+            )
+        }
+
+        composable(Screen.ChatIntake.route) {
+            ChatIntakeScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.TypeIntake.route) {
+            TypeIntakeScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.Wizard.route) {
+            WizardScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.AISettings.route) {
+            AIAssistantSettingsScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(Screen.Auth.route) {
-            // TODO: Implement auth screen
             SplashScreen(
                 onNavigateToAuth = {},
                 onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
+                    navController.navigate(Screen.Welcome.route) {
                         popUpTo(Screen.Auth.route) { inclusive = true }
                     }
                 }

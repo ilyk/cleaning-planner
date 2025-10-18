@@ -31,6 +31,7 @@ include(":data:repository")
 
 // Feature modules
 include(":feature:auth")
+include(":feature:clara")
 include(":feature:household")
 include(":feature:rooms")
 include(":feature:qr")
