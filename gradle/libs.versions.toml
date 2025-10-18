@@ -49,6 +49,10 @@ kaspresso = "1.5.5"
 androidx-test-ext = "1.2.1"
 espresso = "3.6.1"
 
+# 3D Rendering
+filament = "1.51.5"
+sceneview = "2.2.1"
+
 # Other
 material = "1.12.0"
 kotlinx-coroutines = "1.9.0"
@@ -132,6 +136,9 @@ kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", ve
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+
+# 3D Rendering
+sceneview = { group = "io.github.sceneview", name = "sceneview", version.ref = "sceneview" }
 
 # Other
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

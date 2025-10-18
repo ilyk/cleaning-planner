@@ -24,7 +24,7 @@ class ClaraRepository @Inject constructor(
     private val openAIApi: OpenAIApi
 ) {
     companion object {
-        private const val SYSTEM_PROMPT = "You are Clara, a warm, concise, emotionally intelligent household planning assistant. You speak naturally, avoid robotic instructions, and never mention internal processes. Keep replies short (1–2 sentences), positive, and helpful. Avoid emojis unless user uses them first."
+        private const val SYSTEM_PROMPT = "You are a warm, concise, emotionally intelligent household planning assistant named according to the selected avatar. You speak naturally, avoid robotic instructions, and never mention internal processes. Keep replies to 1–2 sentences, positive and helpful. Avoid emojis unless the user uses them first."
         
         private val FALLBACK_RESPONSES = mapOf(
             "lets_chat" to "Great — tell me a little about your home whenever you're ready.",
@@ -100,10 +100,19 @@ class ClaraRepository @Inject constructor(
                 maxTokens = 150
             )
 
-            val response = openAIApi.createChatCompletion(
-                authorization = "Bearer ${config.apiKey}",
-                request = request
-            )
+            // Try GPT-5 (gpt-4o) first, fall back to gpt-4o-mini silently
+            val response = try {
+                openAIApi.createChatCompletion(
+                    authorization = "Bearer ${config.apiKey}",
+                    request = request.copy(model = "gpt-4o")
+                )
+            } catch (e: Exception) {
+                // Silent fallback to gpt-4o-mini
+                openAIApi.createChatCompletion(
+                    authorization = "Bearer ${config.apiKey}",
+                    request = request.copy(model = "gpt-4o-mini")
+                )
+            }
 
             val message = response.choices.firstOrNull()?.message?.content
                 ?: return ClaraResult.Error(

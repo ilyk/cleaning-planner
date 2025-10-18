@@ -2,8 +2,14 @@ package com.ilyk.cleaningplanner.feature.clara.ui.welcome
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ilyk.cleaningplanner.core.model.Avatar3DAsset
+import com.ilyk.cleaningplanner.core.model.Avatar3DPrefs
 import com.ilyk.cleaningplanner.core.model.AvatarPrefs
 import com.ilyk.cleaningplanner.core.model.VoiceStyle
+import com.ilyk.cleaningplanner.feature.clara.avatar.SceneViewAvatarProvider
+import com.ilyk.cleaningplanner.feature.clara.data.Avatar3DPrefsDataStore
+import com.ilyk.cleaningplanner.feature.clara.lipsync.VisemeEngine
+import com.ilyk.cleaningplanner.feature.clara.repository.AvatarRepository
 import com.ilyk.cleaningplanner.feature.clara.repository.ClaraRepository
 import com.ilyk.cleaningplanner.feature.clara.repository.ClaraResult
 import com.ilyk.cleaningplanner.feature.clara.service.TTSService
@@ -12,12 +18,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class WelcomeUiState(
-    val avatarPrefs: AvatarPrefs = AvatarPrefs(),
+    val avatarPrefs: Avatar3DPrefs = Avatar3DPrefs(),
+    val currentAvatar: Avatar3DAsset? = null,
     val currentSubtitle: String = "",
     val isWelcomeSpeaking: Boolean = false,
     val followUpMessage: String = "",
@@ -27,7 +35,11 @@ data class WelcomeUiState(
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val claraRepository: ClaraRepository,
-    private val ttsService: TTSService
+    private val ttsService: TTSService,
+    private val avatar3DPrefsDataStore: Avatar3DPrefsDataStore,
+    private val avatarRepository: AvatarRepository,
+    val avatarProvider: SceneViewAvatarProvider,
+    private val visemeEngine: VisemeEngine
 ) : ViewModel() {
 
     companion object {
@@ -45,60 +57,71 @@ Tap the AI avatar button in the bottom-right corner to change how I look or soun
 I'll always be there when you want me back."""
     }
 
-    val avatarPrefs: StateFlow<AvatarPrefs> = claraRepository.avatarPrefs
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AvatarPrefs()
-        )
+    private val _followUpState = MutableStateFlow<Pair<String, Boolean>>("" to false)
 
-    private val _uiState = MutableStateFlow(WelcomeUiState())
-    val uiState: StateFlow<WelcomeUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<WelcomeUiState> = combine(
+        avatar3DPrefsDataStore.avatar3DPrefs,
+        avatarRepository.allAvatars,
+        _followUpState
+    ) { prefs, avatars, (followUp, isLoading) ->
+        WelcomeUiState(
+            avatarPrefs = prefs,
+            currentAvatar = avatars.find { it.id == prefs.appearanceId },
+            currentSubtitle = if (followUp.isNotEmpty()) followUp else WELCOME_TEXT,
+            followUpMessage = followUp,
+            isLoadingFollowUp = isLoading
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        WelcomeUiState()
+    )
 
     fun startWelcome() {
         viewModelScope.launch {
-            val prefs = avatarPrefs.value
-            _uiState.value = _uiState.value.copy(
-                avatarPrefs = prefs,
-                currentSubtitle = WELCOME_TEXT,
-                isWelcomeSpeaking = true
-            )
+            val prefs = uiState.value.avatarPrefs
 
             if (!prefs.muteVoice && prefs.showAvatar) {
                 val voiceStyle = VoiceStyle.fromId(prefs.voiceId)
                 ttsService.speak(WELCOME_TEXT, voiceStyle)
+                
+                // Generate visemes for lip-sync
+                val visemes = visemeEngine.phonemesToVisemes(WELCOME_TEXT, estimateDuration(WELCOME_TEXT))
+                visemeEngine.playVisemes(visemes, avatarProvider)
             }
         }
+    }
+    
+    private fun estimateDuration(text: String): Long {
+        // Rough estimate: ~150 words per minute = ~2.5 words per second
+        val words = text.split(" ").size
+        return (words / 2.5 * 1000).toLong()
     }
 
     fun onOptionSelected(option: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingFollowUp = true)
+            _followUpState.value = "" to true
             
             when (val result = claraRepository.getClaraResponse(option)) {
                 is ClaraResult.Success -> {
                     val message = result.message
-                    _uiState.value = _uiState.value.copy(
-                        followUpMessage = message,
-                        isLoadingFollowUp = false,
-                        currentSubtitle = message
-                    )
+                    _followUpState.value = message to false
                     
-                    val prefs = avatarPrefs.value
+                    val prefs = uiState.value.avatarPrefs
                     if (!prefs.muteVoice && prefs.showAvatar) {
                         val voiceStyle = VoiceStyle.fromId(prefs.voiceId)
                         ttsService.speak(message, voiceStyle)
+                        
+                        // Generate and play visemes
+                        val visemes = visemeEngine.phonemesToVisemes(message, estimateDuration(message))
+                        visemeEngine.playVisemes(visemes, avatarProvider)
                     }
                 }
                 is ClaraResult.Error -> {
                     val message = result.fallback
-                    _uiState.value = _uiState.value.copy(
-                        followUpMessage = message,
-                        isLoadingFollowUp = false,
-                        currentSubtitle = message
-                    )
+                    _followUpState.value = message to false
                     
-                    val prefs = avatarPrefs.value
+                    val prefs = uiState.value.avatarPrefs
                     if (!prefs.muteVoice && prefs.showAvatar) {
                         val voiceStyle = VoiceStyle.fromId(prefs.voiceId)
                         ttsService.speak(message, voiceStyle)
@@ -106,15 +129,12 @@ I'll always be there when you want me back."""
                 }
             }
         }
-    }
-
-    fun clearSubtitle() {
-        _uiState.value = _uiState.value.copy(currentSubtitle = "")
     }
 
     override fun onCleared() {
         super.onCleared()
         ttsService.stop()
+        visemeEngine.stop()
     }
 }
 

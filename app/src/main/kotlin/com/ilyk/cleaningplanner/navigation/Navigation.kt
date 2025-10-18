@@ -5,9 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ilyk.cleaningplanner.feature.clara.ui.diagnostics.PerformanceDiagnosticsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.intake.ChatIntakeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.intake.TypeIntakeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.AIAssistantSettingsScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.settings.Avatar3DSettingsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.welcome.WelcomeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.wizard.WizardScreen
 import com.ilyk.cleaningplanner.ui.home.HomeScreen
@@ -20,6 +22,8 @@ sealed class Screen(val route: String) {
     data object TypeIntake : Screen("type_intake")
     data object Wizard : Screen("wizard")
     data object AISettings : Screen("ai_settings")
+    data object Avatar3DSettings : Screen("avatar_3d_settings")
+    data object Diagnostics : Screen("diagnostics")
     data object Home : Screen("home")
     data object Auth : Screen("auth")
     data object HouseholdSelect : Screen("household_select")
@@ -61,6 +65,9 @@ fun CleaningPlannerNavHost(
                 },
                 onNavigateToWizard = {
                     navController.navigate(Screen.Wizard.route)
+                },
+                onNavigateToAISettings = {
+                    navController.navigate(Screen.AISettings.route)
                 }
             )
         }
@@ -91,6 +98,25 @@ fun CleaningPlannerNavHost(
 
         composable(Screen.AISettings.route) {
             AIAssistantSettingsScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.Avatar3DSettings.route) {
+            Avatar3DSettingsScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDiagnostics = {
+                    navController.navigate(Screen.Diagnostics.route)
+                }
+            )
+        }
+
+        composable(Screen.Diagnostics.route) {
+            PerformanceDiagnosticsScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

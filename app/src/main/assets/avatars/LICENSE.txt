@@ -1,0 +1,20 @@
+Avatar Assets License Information
+===================================
+
+clara_default.glb
+-----------------
+Source: Provided for Cleaning Planner app
+License: Commercial use permitted for this application
+File Size: ~2.8 MB
+Triangle Count: ~80,000 (estimated)
+Features: PBR materials, skeletal rig, idle animation, blink
+Provider: Bundled asset
+Version: 1.0
+Date: 2025-10-18
+
+This avatar is bundled with the Cleaning Planner application and is licensed
+for use within this application only. Redistribution or extraction of this
+asset is not permitted.
+
+For questions about licensing, contact: ilyk.im
+

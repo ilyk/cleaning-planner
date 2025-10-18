@@ -29,11 +29,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ilyk.cleaningplanner.core.model.AvatarAppearance
+import com.ilyk.cleaningplanner.feature.clara.ui.components.Avatar3DView
 import com.ilyk.cleaningplanner.feature.clara.ui.components.ClaraAvatar
 import com.ilyk.cleaningplanner.feature.clara.ui.components.ClaraFAB
 import com.ilyk.cleaningplanner.feature.clara.ui.components.ClaraViewModel
 import com.ilyk.cleaningplanner.feature.clara.ui.components.SubtitleDisplay
 import com.ilyk.cleaningplanner.feature.clara.ui.components.TextBubble
+import com.ilyk.cleaningplanner.feature.clara.ui.settings.Avatar3DSettingsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.AvatarSettingsSheet
 
 @Composable
@@ -41,6 +43,7 @@ fun WelcomeScreen(
     onNavigateToChat: () -> Unit,
     onNavigateToTypeInfo: () -> Unit,
     onNavigateToWizard: () -> Unit,
+    onNavigateToAISettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: WelcomeViewModel = hiltViewModel(),
     claraViewModel: ClaraViewModel = hiltViewModel()
@@ -77,7 +80,22 @@ fun WelcomeScreen(
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                if (avatarPrefs.showAvatar) {
+                if (avatarPrefs.showAvatar && uiState.currentAvatar != null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                    ) {
+                        Avatar3DView(
+                            glbPath = uiState.currentAvatar.glbPath,
+                            avatarProvider = viewModel.avatarProvider,
+                            onError = { error ->
+                                // Fallback to icon avatar
+                            }
+                        )
+                    }
+                } else if (avatarPrefs.showAvatar) {
+                    // Fallback to icon avatar while 3D loads
                     ClaraAvatar(
                         appearance = AvatarAppearance.fromId(avatarPrefs.appearanceId),
                         size = 120.dp

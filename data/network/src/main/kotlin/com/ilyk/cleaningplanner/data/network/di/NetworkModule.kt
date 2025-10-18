@@ -117,9 +117,34 @@ object NetworkModule {
     fun provideOpenAIApi(@OpenAIRetrofit retrofit: Retrofit): OpenAIApi {
         return retrofit.create(OpenAIApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    @MeshyRetrofit
+    fun provideMeshyRetrofit(
+        okHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl("https://api.meshy.ai/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMeshyApi(@MeshyRetrofit retrofit: Retrofit): com.ilyk.cleaningplanner.data.network.api.MeshyApi {
+        return retrofit.create(com.ilyk.cleaningplanner.data.network.api.MeshyApi::class.java)
+    }
 }
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class OpenAIRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MeshyRetrofit
 
