@@ -57,14 +57,13 @@ class SceneViewAvatarProvider @Inject constructor(
             withContext(Dispatchers.Main) {
                 sceneView?.let { scene ->
                     try {
-                        // Create model node from GLB file using asset path or file location
-                        val node = ModelNode(
-                            modelInstance = scene.modelLoader.createModelInstance(glbPath)
-                        )
-                        
-                        modelNode = node
-                        scene.addChildNode(node)
-                        hasVisemes = false
+                        // Load model using SceneView's model loader
+                        scene.modelLoader.loadModel(glbPath)?.let { modelInstance ->
+                            val node = ModelNode(modelInstance)
+                            modelNode = node
+                            scene.addChildNode(node)
+                            hasVisemes = false
+                        }
                     } catch (e: Exception) {
                         // Model loading failed, but don't crash
                         e.printStackTrace()
