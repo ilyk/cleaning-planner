@@ -65,14 +65,13 @@ class SceneViewAvatarProvider @Inject constructor(
                             if (instance != null) {
                                 val node = ModelNode(instance)
                                 modelNode = node
-                                scene.addChildNode<ModelNode>(node)
+                                scene.addChildNode(node)
                                 hasVisemes = false
                             }
                         }
                     } catch (e: Exception) {
                         // Model loading failed, but don't crash
                         e.printStackTrace()
-                        return@withContext Result.failure(e)
                     }
                 }
             }
