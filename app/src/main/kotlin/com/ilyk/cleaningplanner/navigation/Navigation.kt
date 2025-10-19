@@ -10,6 +10,7 @@ import com.ilyk.cleaningplanner.feature.clara.ui.intake.ChatIntakeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.intake.TypeIntakeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.AIAssistantSettingsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.Avatar3DSettingsScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.setup.APIKeySetupScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.welcome.WelcomeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.wizard.WizardScreen
 import com.ilyk.cleaningplanner.ui.home.HomeScreen
@@ -17,6 +18,7 @@ import com.ilyk.cleaningplanner.ui.splash.SplashScreen
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
+    data object APIKeySetup : Screen("api_key_setup")
     data object Welcome : Screen("welcome")
     data object ChatIntake : Screen("chat_intake")
     data object TypeIntake : Screen("type_intake")
@@ -48,8 +50,23 @@ fun CleaningPlannerNavHost(
                     }
                 },
                 onNavigateToHome = {
-                    navController.navigate(Screen.Welcome.route) {
+                    navController.navigate(Screen.APIKeySetup.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.APIKeySetup.route) {
+            APIKeySetupScreen(
+                onConfigured = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(Screen.APIKeySetup.route) { inclusive = true }
+                    }
+                },
+                onSkip = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(Screen.APIKeySetup.route) { inclusive = true }
                     }
                 }
             )
