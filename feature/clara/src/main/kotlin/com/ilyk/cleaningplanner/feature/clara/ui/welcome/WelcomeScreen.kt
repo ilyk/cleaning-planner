@@ -80,14 +80,15 @@ fun WelcomeScreen(
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                if (avatarPrefs.showAvatar && uiState.currentAvatar != null) {
+                val avatar = uiState.currentAvatar
+                if (avatarPrefs.showAvatar && avatar != null) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp)
                     ) {
                         Avatar3DView(
-                            glbPath = uiState.currentAvatar.glbPath,
+                            glbPath = avatar.glbPath,
                             avatarProvider = viewModel.avatarProvider,
                             onError = { error ->
                                 // Fallback to icon avatar

@@ -118,9 +118,10 @@ fun Avatar3DSettingsScreen(
                 )
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    if (uiState.currentAvatar != null && uiState.prefs.showAvatar) {
+                    val avatar = uiState.currentAvatar
+                    if (avatar != null && uiState.prefs.showAvatar) {
                         Avatar3DView(
-                            glbPath = uiState.currentAvatar.glbPath,
+                            glbPath = avatar.glbPath,
                             avatarProvider = viewModel.avatarProvider,
                             onError = { error ->
                                 // Show error snackbar

@@ -1,18 +1,23 @@
 package com.ilyk.cleaningplanner.feature.clara.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
 import com.ilyk.cleaningplanner.feature.clara.avatar.SceneViewAvatarProvider
-import io.github.sceneview.SceneView
 
 /**
  * Composable that displays a 3D avatar using SceneView.
+ * 
+ * Note: This is a simplified stub implementation. Full 3D rendering requires
+ * correct SceneView 2.2.1 API integration with proper model loading, animation,
+ * and rendering setup.
  */
 @Composable
 fun Avatar3DView(
@@ -24,16 +29,7 @@ fun Avatar3DView(
 ) {
     val context = LocalContext.current
     
-    val sceneView = remember {
-        SceneView(context).apply {
-            // Configure scene
-            isOpaque = false
-        }
-    }
-    
     LaunchedEffect(glbPath) {
-        avatarProvider.attachToSceneView(sceneView)
-        
         val result = avatarProvider.loadModel(glbPath)
         if (result.isSuccess) {
             avatarProvider.playIdleAnimation()
@@ -49,9 +45,19 @@ fun Avatar3DView(
         }
     }
     
-    AndroidView(
-        factory = { sceneView },
-        modifier = modifier.fillMaxSize()
-    )
+    // Simplified view - actual SceneView integration requires:
+    // 1. Correct SceneView(context) initialization
+    // 2. ModelNode with proper API for the specific version
+    // 3. Scene attachment and rendering setup
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "3D Avatar\n(${glbPath.substringAfterLast('/')})",
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+    }
 }
 

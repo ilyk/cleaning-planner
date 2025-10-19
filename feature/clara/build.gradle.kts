@@ -36,6 +36,10 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":data:database"))
     implementation(project(":data:network"))
+    
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
