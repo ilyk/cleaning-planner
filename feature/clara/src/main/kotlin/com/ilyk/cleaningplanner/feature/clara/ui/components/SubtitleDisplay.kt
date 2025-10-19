@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -39,7 +40,7 @@ fun SubtitleDisplay(
                 )
                 .padding(16.dp)
                 .semantics {
-                    liveRegion
+                    liveRegion = LiveRegionMode.Polite
                     contentDescription = "Clara: $text"
                 },
             contentAlignment = Alignment.Center
@@ -68,7 +69,7 @@ fun TextBubble(
             )
             .padding(20.dp)
             .semantics {
-                liveRegion
+                liveRegion = LiveRegionMode.Polite
                 contentDescription = "Clara: $text"
             }
     ) {
