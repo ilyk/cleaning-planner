@@ -46,8 +46,6 @@ fun Avatar3DView(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> sceneView.onResume()
-                Lifecycle.Event.ON_PAUSE -> sceneView.onPause()
                 Lifecycle.Event.ON_DESTROY -> avatarProvider.release()
                 else -> {}
             }
