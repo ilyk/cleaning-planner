@@ -135,7 +135,11 @@ fun CleaningPlannerNavHost(
         }
 
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToAISettings = {
+                    navController.navigate(Screen.AISettings.route)
+                }
+            )
         }
     }
 }

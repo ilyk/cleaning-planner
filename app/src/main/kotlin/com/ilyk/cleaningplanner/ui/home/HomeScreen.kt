@@ -1,5 +1,6 @@
 package com.ilyk.cleaningplanner.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -44,7 +46,9 @@ data class BottomNavItem(
 )
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onNavigateToAISettings: () -> Unit = {}
+) {
     val navController = rememberNavController()
     val tabs = listOf(
         BottomNavItem(Routes.BOARD, Icons.Default.Dashboard, "Board"),
@@ -82,7 +86,7 @@ fun HomeScreen() {
         ) {
             composable(Routes.BOARD) { BoardTabContent(onScanQr = { navController.navigate(Routes.QR) }) }
             composable(Routes.ROOMS) { RoomsTabContent(onScanQr = { navController.navigate(Routes.QR) }) }
-            composable(Routes.SETTINGS) { SettingsTabContent() }
+            composable(Routes.SETTINGS) { SettingsTabContent(onNavigateToAISettings = onNavigateToAISettings) }
             composable(Routes.QR) { QrScreen(onClose = { navController.popBackStack() }) }
         }
     }
@@ -128,9 +132,47 @@ fun RoomsTabContent(onScanQr: () -> Unit) {
 }
 
 @Composable
-fun SettingsTabContent() {
-    Column(Modifier.padding(16.dp)) {
-        Text("Settings - Coming soon")
+fun SettingsTabContent(
+    onNavigateToAISettings: () -> Unit = {}
+) {
+    Column(Modifier.padding(16.dp).fillMaxSize()) {
+        Text(
+            "Settings",
+            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+        
+        ListItem(
+            headlineContent = { Text("AI Assistant") },
+            supportingContent = { Text("Configure OpenAI (GPT-5)") },
+            leadingContent = {
+                Icon(
+                    androidx.compose.material.icons.Icons.Default.Settings,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier.clickable { onNavigateToAISettings() }
+        )
+        
+        HorizontalDivider()
+        
+        ListItem(
+            headlineContent = { Text("Avatar Settings") },
+            supportingContent = { Text("Customize Clara's appearance and voice") },
+            leadingContent = {
+                Icon(
+                    androidx.compose.material.icons.Icons.Default.Face,
+                    contentDescription = null
+                )
+            }
+        )
+        
+        HorizontalDivider()
+        
+        ListItem(
+            headlineContent = { Text("Account") },
+            supportingContent = { Text("Coming soon") }
+        )
     }
 }
 
