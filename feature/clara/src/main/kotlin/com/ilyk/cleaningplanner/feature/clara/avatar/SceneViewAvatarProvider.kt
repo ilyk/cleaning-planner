@@ -57,23 +57,17 @@ class SceneViewAvatarProvider @Inject constructor(
             withContext(Dispatchers.Main) {
                 sceneView?.let { scene ->
                     try {
-                        // Create model node from GLB file
-                        modelNode = ModelNode().apply {
-                            loadModelGlbAsync(
-                                glbFileLocation = glbPath,
-                                autoAnimate = true,
-                                scaleToUnits = 1.0f,
-                                centerOrigin = io.github.sceneview.math.Position(0f, 0f, 0f)
-                            ) {
-                                // Model loaded successfully
-                            }
-                        }
+                        // Create model node from GLB file using asset path or file location
+                        val node = ModelNode(
+                            modelInstance = scene.modelLoader.createModelInstance(glbPath)
+                        )
                         
-                        modelNode?.let { node ->
-                            scene.addChildNode(node)
-                            hasVisemes = false // Will check for morph targets later
-                        }
+                        modelNode = node
+                        scene.addChildNode(node)
+                        hasVisemes = false
                     } catch (e: Exception) {
+                        // Model loading failed, but don't crash
+                        e.printStackTrace()
                         return@withContext Result.failure(e)
                     }
                 }
@@ -87,12 +81,20 @@ class SceneViewAvatarProvider @Inject constructor(
     
     override fun playIdleAnimation() {
         isAnimating = true
-        modelNode?.playAnimation(animationIndex = 0)
+        try {
+            modelNode?.playAnimation(0)
+        } catch (e: Exception) {
+            // Animation not available
+        }
     }
     
     override fun stopAnimations() {
         isAnimating = false
-        modelNode?.stopAnimation()
+        try {
+            modelNode?.stopAnimation(0)
+        } catch (e: Exception) {
+            // No animation to stop
+        }
     }
     
     private fun startFpsTracking() {

@@ -29,10 +29,7 @@ fun Avatar3DView(
     val lifecycleOwner = LocalLifecycleOwner.current
     
     val sceneView = remember(context) {
-        SceneView(context).apply {
-            // Configure scene for avatar display
-            isOpaque = false
-        }
+        SceneView(context)
     }
     
     LaunchedEffect(glbPath, sceneView) {
