@@ -46,7 +46,7 @@ Output only the final prompt text, no explanations or metadata."""
             val userMessage = buildUserMessage(request)
             
             val openAIRequest = OpenAIRequest(
-                model = if (config.model == "gpt-4o-mini") "gpt-4o-mini" else "gpt-4o",
+                model = config.model,
                 messages = listOf(
                     OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
                     OpenAIMessage(role = "user", content = userMessage)
@@ -59,9 +59,10 @@ Output only the final prompt text, no explanations or metadata."""
             val response = try {
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = openAIRequest.copy(model = "gpt-4o")
+                    request = openAIRequest.copy(model = "gpt-5")
                 )
             } catch (e: Exception) {
+                // Silent fallback to gpt-4o-mini if GPT-5 unavailable
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
                     request = openAIRequest.copy(model = "gpt-4o-mini")

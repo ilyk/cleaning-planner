@@ -48,7 +48,7 @@ data class OpenAIUsage(
 @Serializable
 data class OpenAIConfig(
     val provider: String = "OpenAI",
-    val model: String = "gpt-4o-mini",
+    val model: String = "gpt-5",
     val apiKey: String = ""
 )
 

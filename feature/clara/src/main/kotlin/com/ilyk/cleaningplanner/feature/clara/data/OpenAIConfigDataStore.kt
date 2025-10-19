@@ -28,7 +28,7 @@ class OpenAIConfigDataStore @Inject constructor(
     val openAIConfig: Flow<OpenAIConfig> = context.openAIConfigDataStore.data.map { prefs ->
         OpenAIConfig(
             provider = prefs[Keys.PROVIDER] ?: "OpenAI",
-            model = prefs[Keys.MODEL] ?: "gpt-4o-mini",
+            model = prefs[Keys.MODEL] ?: "gpt-5",
             apiKey = prefs[Keys.API_KEY] ?: ""
         )
     }

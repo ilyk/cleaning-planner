@@ -100,14 +100,14 @@ class ClaraRepository @Inject constructor(
                 maxTokens = 150
             )
 
-            // Try GPT-5 (gpt-4o) first, fall back to gpt-4o-mini silently
+            // Try GPT-5 first, fall back to gpt-4o-mini silently
             val response = try {
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = request.copy(model = "gpt-4o")
+                    request = request.copy(model = "gpt-5")
                 )
             } catch (e: Exception) {
-                // Silent fallback to gpt-4o-mini
+                // Silent fallback to gpt-4o-mini if GPT-5 unavailable/quota exceeded
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
                     request = request.copy(model = "gpt-4o-mini")
