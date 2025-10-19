@@ -1,23 +1,21 @@
 package com.ilyk.cleaningplanner.feature.clara.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.ilyk.cleaningplanner.feature.clara.avatar.SceneViewAvatarProvider
+import io.github.sceneview.SceneView
 
 /**
  * Composable that displays a 3D avatar using SceneView.
- * 
- * Note: This is a simplified stub implementation. Full 3D rendering requires
- * correct SceneView 2.2.1 API integration with proper model loading, animation,
- * and rendering setup.
+ * Loads and renders GLB models with animations.
  */
 @Composable
 fun Avatar3DView(
@@ -28,8 +26,17 @@ fun Avatar3DView(
     onError: ((String) -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     
-    LaunchedEffect(glbPath) {
+    val sceneView = remember(context) {
+        SceneView(context).apply {
+            // Configure scene for avatar display
+            isOpaque = false
+        }
+    }
+    
+    LaunchedEffect(glbPath, sceneView) {
+        avatarProvider.attachToSceneView(sceneView)
         val result = avatarProvider.loadModel(glbPath)
         if (result.isSuccess) {
             avatarProvider.playIdleAnimation()
@@ -39,25 +46,26 @@ fun Avatar3DView(
         }
     }
     
-    DisposableEffect(Unit) {
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> sceneView.onResume()
+                Lifecycle.Event.ON_PAUSE -> sceneView.onPause()
+                Lifecycle.Event.ON_DESTROY -> avatarProvider.release()
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        
         onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
             avatarProvider.release()
         }
     }
     
-    // Simplified view - actual SceneView integration requires:
-    // 1. Correct SceneView(context) initialization
-    // 2. ModelNode with proper API for the specific version
-    // 3. Scene attachment and rendering setup
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "3D Avatar\n(${glbPath.substringAfterLast('/')})",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-        )
-    }
+    AndroidView(
+        factory = { sceneView },
+        modifier = modifier
+    )
 }
 

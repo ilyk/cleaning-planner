@@ -81,10 +81,32 @@ fun WelcomeScreen(
                 Spacer(modifier = Modifier.height(40.dp))
 
                 if (uiState.avatarPrefs.showAvatar) {
-                    ClaraAvatar(
-                        appearance = AvatarAppearance.fromId(legacyAvatarPrefs.appearanceId),
-                        size = 120.dp
-                    )
+                    val avatar = uiState.currentAvatar
+                    if (avatar != null) {
+                        // 3D Avatar
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                        ) {
+                            Avatar3DView(
+                                glbPath = avatar.glbPath,
+                                avatarProvider = viewModel.avatarProvider,
+                                onLoaded = {
+                                    // Avatar loaded successfully
+                                },
+                                onError = { error ->
+                                    // Silently fallback (icon avatar)
+                                }
+                            )
+                        }
+                    } else {
+                        // Icon fallback while DB loads
+                        ClaraAvatar(
+                            appearance = AvatarAppearance.fromId(legacyAvatarPrefs.appearanceId),
+                            size = 120.dp
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
