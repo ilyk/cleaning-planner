@@ -62,10 +62,12 @@ class SceneViewAvatarProvider @Inject constructor(
                         if (asset != null) {
                             // Create instance from asset
                             val instance = scene.modelLoader.createInstance(asset)
-                            val node = ModelNode(instance)
-                            modelNode = node
-                            scene.addChildNode(node)
-                            hasVisemes = false
+                            if (instance != null) {
+                                val node = ModelNode(instance)
+                                modelNode = node
+                                scene.addChildNode<ModelNode>(node)
+                                hasVisemes = false
+                            }
                         }
                     } catch (e: Exception) {
                         // Model loading failed, but don't crash
