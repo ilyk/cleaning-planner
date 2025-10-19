@@ -105,7 +105,7 @@ class SceneViewAvatarProvider @Inject constructor(
         sceneView?.let { view ->
             // Track FPS through frame updates
             var frameCounter = 0
-            view.onFrame = { frameTimeNanos ->
+            view.onFrame = { _: Long ->
                 frameCounter++
                 val currentTime = System.currentTimeMillis()
                 val elapsed = currentTime - lastFrameTime
