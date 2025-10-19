@@ -58,8 +58,11 @@ class SceneViewAvatarProvider @Inject constructor(
                 sceneView?.let { scene ->
                     try {
                         // Load model using SceneView's model loader
-                        scene.modelLoader.loadModel(glbPath)?.let { modelInstance ->
-                            val node = ModelNode(modelInstance)
+                        val asset = scene.modelLoader.loadModel(glbPath)
+                        if (asset != null) {
+                            // Create instance from asset
+                            val instance = scene.modelLoader.createInstance(asset)
+                            val node = ModelNode(instance)
                             modelNode = node
                             scene.addChildNode(node)
                             hasVisemes = false
