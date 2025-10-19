@@ -51,7 +51,7 @@ class ClaraRepository @Inject constructor(
                 return Result.failure(Exception("API key is required"))
             }
 
-            val request = OpenAIRequest(
+            val request = OpenAIRequest.create(
                 model = config.model,
                 messages = listOf(
                     OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
@@ -92,25 +92,31 @@ class ClaraRepository @Inject constructor(
                 messages.add(OpenAIMessage(role = "user", content = "The user selected: $context"))
             }
 
-            val request = OpenAIRequest(
-                model = config.model,
-                messages = messages,
-                temperature = 0.4,
-                topP = 0.9,
-                maxTokens = 150
-            )
-
             // Try GPT-5 first, fall back to gpt-4o-mini silently
             val response = try {
+                val request = OpenAIRequest.create(
+                    model = "gpt-5",
+                    messages = messages,
+                    temperature = 0.4,
+                    topP = 0.9,
+                    maxTokens = 150
+                )
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = request.copy(model = "gpt-5")
+                    request = request
                 )
             } catch (e: Exception) {
                 // Silent fallback to gpt-4o-mini if GPT-5 unavailable/quota exceeded
+                val request = OpenAIRequest.create(
+                    model = "gpt-4o-mini",
+                    messages = messages,
+                    temperature = 0.4,
+                    topP = 0.9,
+                    maxTokens = 150
+                )
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = request.copy(model = "gpt-4o-mini")
+                    request = request
                 )
             }
 

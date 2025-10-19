@@ -45,27 +45,36 @@ Output only the final prompt text, no explanations or metadata."""
         return try {
             val userMessage = buildUserMessage(request)
             
-            val openAIRequest = OpenAIRequest(
-                model = config.model,
-                messages = listOf(
-                    OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
-                    OpenAIMessage(role = "user", content = userMessage)
-                ),
-                temperature = 0.3,
-                topP = 0.9,
-                maxTokens = 500
-            )
-
             val response = try {
+                val request = OpenAIRequest.create(
+                    model = "gpt-5",
+                    messages = listOf(
+                        OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
+                        OpenAIMessage(role = "user", content = userMessage)
+                    ),
+                    temperature = 0.3,
+                    topP = 0.9,
+                    maxTokens = 500
+                )
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = openAIRequest.copy(model = "gpt-5")
+                    request = request
                 )
             } catch (e: Exception) {
                 // Silent fallback to gpt-4o-mini if GPT-5 unavailable
+                val request = OpenAIRequest.create(
+                    model = "gpt-4o-mini",
+                    messages = listOf(
+                        OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
+                        OpenAIMessage(role = "user", content = userMessage)
+                    ),
+                    temperature = 0.3,
+                    topP = 0.9,
+                    maxTokens = 500
+                )
                 openAIApi.createChatCompletion(
                     authorization = "Bearer ${config.apiKey}",
-                    request = openAIRequest.copy(model = "gpt-4o-mini")
+                    request = request
                 )
             }
 

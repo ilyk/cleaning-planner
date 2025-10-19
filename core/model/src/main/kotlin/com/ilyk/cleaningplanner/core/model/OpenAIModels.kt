@@ -11,8 +11,44 @@ data class OpenAIRequest(
     @SerialName("top_p")
     val topP: Double = 0.9,
     @SerialName("max_tokens")
-    val maxTokens: Int = 150
-)
+    val maxTokens: Int? = null,
+    @SerialName("max_completion_tokens")
+    val maxCompletionTokens: Int? = null
+) {
+    companion object {
+        fun create(
+            model: String,
+            messages: List<OpenAIMessage>,
+            temperature: Double = 0.4,
+            topP: Double = 0.9,
+            maxTokens: Int = 150
+        ): OpenAIRequest {
+            // GPT-5 and o-series models use max_completion_tokens
+            // Earlier models use max_tokens
+            val isNewModel = model.startsWith("gpt-5") || model.startsWith("o1") || model.startsWith("o3")
+            
+            return if (isNewModel) {
+                OpenAIRequest(
+                    model = model,
+                    messages = messages,
+                    temperature = temperature,
+                    topP = topP,
+                    maxTokens = null,
+                    maxCompletionTokens = maxTokens
+                )
+            } else {
+                OpenAIRequest(
+                    model = model,
+                    messages = messages,
+                    temperature = temperature,
+                    topP = topP,
+                    maxTokens = maxTokens,
+                    maxCompletionTokens = null
+                )
+            }
+        }
+    }
+}
 
 @Serializable
 data class OpenAIMessage(
