@@ -80,36 +80,17 @@ fun WelcomeScreen(
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                val avatar = uiState.currentAvatar
-                if (avatarPrefs.showAvatar && avatar != null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp)
-                    ) {
-                        Avatar3DView(
-                            glbPath = avatar.glbPath,
-                            avatarProvider = viewModel.avatarProvider,
-                            onError = { error ->
-                                // Fallback to icon avatar
-                            }
-                        )
-                    }
-                } else if (avatarPrefs.showAvatar) {
-                    // Fallback to icon avatar while 3D loads
+                if (avatarPrefs.showAvatar) {
+                    // Always show icon avatar for now (3D rendering stubbed)
                     ClaraAvatar(
                         appearance = AvatarAppearance.fromId(avatarPrefs.appearanceId),
                         size = 120.dp
                     )
                 }
 
-                if (avatarPrefs.showAvatar && !avatarPrefs.muteVoice) {
-                    SubtitleDisplay(
-                        text = uiState.currentSubtitle,
-                        visible = avatarPrefs.alwaysShowSubtitles || uiState.isWelcomeSpeaking,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                } else {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (avatarPrefs.alwaysShowSubtitles || uiState.isWelcomeSpeaking || avatarPrefs.muteVoice || !avatarPrefs.showAvatar) {
                     TextBubble(
                         text = WelcomeViewModel.WELCOME_TEXT,
                         modifier = Modifier.padding(horizontal = 16.dp)
