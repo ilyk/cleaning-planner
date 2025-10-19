@@ -46,7 +46,7 @@ Output only the final prompt text, no explanations or metadata."""
             val userMessage = buildUserMessage(request)
             
             val response = try {
-                val request = OpenAIRequest.create(
+                val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
                     model = "gpt-5",
                     messages = listOf(
                         OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
@@ -54,15 +54,15 @@ Output only the final prompt text, no explanations or metadata."""
                     ),
                     temperature = 0.3,
                     topP = 0.9,
-                    maxTokens = 500
+                    maxCompletionTokens = 500
                 )
-                openAIApi.createChatCompletion(
+                openAIApi.createChatCompletionGPT5(
                     authorization = "Bearer ${config.apiKey}",
                     request = request
                 )
             } catch (e: Exception) {
                 // Silent fallback to gpt-4o-mini if GPT-5 unavailable
-                val request = OpenAIRequest.create(
+                val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestLegacy(
                     model = "gpt-4o-mini",
                     messages = listOf(
                         OpenAIMessage(role = "system", content = SYSTEM_PROMPT),

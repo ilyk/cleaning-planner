@@ -51,16 +51,17 @@ class ClaraRepository @Inject constructor(
                 return Result.failure(Exception("API key is required"))
             }
 
-            val request = OpenAIRequest.create(
+            // GPT-5 uses different request format
+            val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
                 model = config.model,
                 messages = listOf(
                     OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
                     OpenAIMessage(role = "user", content = "Hi")
                 ),
-                maxTokens = 20
+                maxCompletionTokens = 20
             )
 
-            val response = openAIApi.createChatCompletion(
+            val response = openAIApi.createChatCompletionGPT5(
                 authorization = "Bearer ${config.apiKey}",
                 request = request
             )
@@ -94,20 +95,20 @@ class ClaraRepository @Inject constructor(
 
             // Try GPT-5 first, fall back to gpt-4o-mini silently
             val response = try {
-                val request = OpenAIRequest.create(
+                val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
                     model = "gpt-5",
                     messages = messages,
                     temperature = 0.4,
                     topP = 0.9,
-                    maxTokens = 150
+                    maxCompletionTokens = 150
                 )
-                openAIApi.createChatCompletion(
+                openAIApi.createChatCompletionGPT5(
                     authorization = "Bearer ${config.apiKey}",
                     request = request
                 )
             } catch (e: Exception) {
                 // Silent fallback to gpt-4o-mini if GPT-5 unavailable/quota exceeded
-                val request = OpenAIRequest.create(
+                val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestLegacy(
                     model = "gpt-4o-mini",
                     messages = messages,
                     temperature = 0.4,
