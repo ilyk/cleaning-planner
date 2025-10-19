@@ -48,7 +48,7 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel = hiltViewModel(),
     claraViewModel: ClaraViewModel = hiltViewModel()
 ) {
-    val avatarPrefs by claraViewModel.avatarPrefs.collectAsState()
+    val legacyAvatarPrefs by claraViewModel.avatarPrefs.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     var showSettings by remember { mutableStateOf(false) }
 
@@ -59,7 +59,7 @@ fun WelcomeScreen(
     Scaffold(
         floatingActionButton = {
             ClaraFAB(
-                avatarPrefs = avatarPrefs,
+                avatarPrefs = legacyAvatarPrefs,
                 onClick = { showSettings = true }
             )
         },
@@ -80,22 +80,19 @@ fun WelcomeScreen(
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                if (avatarPrefs.showAvatar) {
-                    // Always show icon avatar for now (3D rendering stubbed)
+                if (uiState.avatarPrefs.showAvatar) {
                     ClaraAvatar(
-                        appearance = AvatarAppearance.fromId(avatarPrefs.appearanceId),
+                        appearance = AvatarAppearance.fromId(legacyAvatarPrefs.appearanceId),
                         size = 120.dp
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (avatarPrefs.alwaysShowSubtitles || uiState.isWelcomeSpeaking || avatarPrefs.muteVoice || !avatarPrefs.showAvatar) {
-                    TextBubble(
-                        text = WelcomeViewModel.WELCOME_TEXT,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                }
+                TextBubble(
+                    text = WelcomeViewModel.WELCOME_TEXT,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -168,7 +165,7 @@ fun WelcomeScreen(
 
         if (showSettings) {
             AvatarSettingsSheet(
-                currentPrefs = avatarPrefs,
+                currentPrefs = legacyAvatarPrefs,
                 onDismiss = { showSettings = false },
                 onSave = { newPrefs ->
                     claraViewModel.updateAvatarPrefs(newPrefs)
