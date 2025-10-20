@@ -52,9 +52,8 @@ Output only the final prompt text, no explanations or metadata."""
                         OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
                         OpenAIMessage(role = "user", content = userMessage)
                     ),
-                    temperature = 0.3,
-                    topP = 0.9,
                     maxCompletionTokens = 500
+                    // GPT-5 uses defaults: temperature=1, top_p=default
                 )
                 openAIApi.createChatCompletionGPT5(
                     authorization = "Bearer ${config.apiKey}",

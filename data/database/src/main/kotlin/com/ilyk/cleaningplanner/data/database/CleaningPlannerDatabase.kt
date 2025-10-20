@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.ilyk.cleaningplanner.data.database.converters.Converters
 import com.ilyk.cleaningplanner.data.database.dao.Avatar3DDao
 import com.ilyk.cleaningplanner.data.database.dao.CommentChipDao
+import com.ilyk.cleaningplanner.data.database.dao.ConversationDao
 import com.ilyk.cleaningplanner.data.database.dao.HouseholdDao
 import com.ilyk.cleaningplanner.data.database.dao.MemberDao
 import com.ilyk.cleaningplanner.data.database.dao.RoomDao
@@ -23,6 +24,7 @@ import com.ilyk.cleaningplanner.data.database.entities.TaskEntity
 import com.ilyk.cleaningplanner.data.database.entities.TemplateEntity
 import com.ilyk.cleaningplanner.data.database.entities.UserEntity
 import com.ilyk.cleaningplanner.data.database.entity.Avatar3DEntity
+import com.ilyk.cleaningplanner.data.database.entity.ConversationEntity
 
 @Database(
     entities = [
@@ -35,9 +37,10 @@ import com.ilyk.cleaningplanner.data.database.entity.Avatar3DEntity
         CommentChipEntity::class,
         ChipUsageEntity::class,
         ScheduleEntity::class,
-        Avatar3DEntity::class
+        Avatar3DEntity::class,
+        ConversationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -51,5 +54,6 @@ abstract class CleaningPlannerDatabase : RoomDatabase() {
     abstract fun commentChipDao(): CommentChipDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun avatar3DDao(): Avatar3DDao
+    abstract fun conversationDao(): ConversationDao
 }
 

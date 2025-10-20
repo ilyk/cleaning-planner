@@ -36,7 +36,11 @@ class IntakeViewModel @Inject constructor(
         viewModelScope.launch {
             _messages.value = _messages.value + ChatMessage(text, isFromUser = true)
 
-            when (val result = claraRepository.getClaraResponse("conversation", text)) {
+            when (val result = claraRepository.getClaraResponse(
+                context = "conversation",
+                conversationHistory = emptyList(),
+                userMessage = text
+            )) {
                 is ClaraResult.Success -> {
                     addClaraMessage(result.message)
                 }

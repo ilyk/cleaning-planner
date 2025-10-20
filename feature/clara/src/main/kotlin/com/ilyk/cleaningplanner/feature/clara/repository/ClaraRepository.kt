@@ -52,14 +52,15 @@ class ClaraRepository @Inject constructor(
             }
 
             // GPT-5 uses different request format
-            val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
-                model = config.model,
-                messages = listOf(
-                    OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
-                    OpenAIMessage(role = "user", content = "Hi")
-                ),
-                maxCompletionTokens = 20
-            )
+        val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
+            model = config.model,
+            messages = listOf(
+                OpenAIMessage(role = "system", content = SYSTEM_PROMPT),
+                OpenAIMessage(role = "user", content = "Hi")
+            ),
+            maxCompletionTokens = 20
+            // GPT-5 uses defaults: temperature=1, top_p=default
+        )
 
             val response = openAIApi.createChatCompletionGPT5(
                 authorization = "Bearer ${config.apiKey}",
@@ -72,7 +73,11 @@ class ClaraRepository @Inject constructor(
         }
     }
 
-    suspend fun getClaraResponse(context: String, userMessage: String = ""): ClaraResult {
+    suspend fun getClaraResponse(
+        context: String, 
+        conversationHistory: List<OpenAIMessage> = emptyList(),
+        userMessage: String = ""
+    ): ClaraResult {
         return try {
             val config = openAIConfig.first()
             
@@ -87,9 +92,14 @@ class ClaraRepository @Inject constructor(
                 OpenAIMessage(role = "system", content = SYSTEM_PROMPT)
             )
             
+            // Add conversation history for context
+            messages.addAll(conversationHistory)
+            
+            // Add current message
             if (userMessage.isNotEmpty()) {
                 messages.add(OpenAIMessage(role = "user", content = userMessage))
-            } else {
+            } else if (conversationHistory.isEmpty()) {
+                // Only add context message if no history
                 messages.add(OpenAIMessage(role = "user", content = "The user selected: $context"))
             }
 
@@ -98,9 +108,8 @@ class ClaraRepository @Inject constructor(
                 val request = com.ilyk.cleaningplanner.core.model.OpenAIRequestGPT5(
                     model = "gpt-5",
                     messages = messages,
-                    temperature = 0.4,
-                    topP = 0.9,
                     maxCompletionTokens = 150
+                    // GPT-5 uses defaults: temperature=1, top_p=default
                 )
                 openAIApi.createChatCompletionGPT5(
                     authorization = "Bearer ${config.apiKey}",

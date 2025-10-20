@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Welcome Screen -->
+    <string name="how_would_you_like_to_begin">Як би ти хотів почати?</string>
+    <string name="voice_chat">Голосовий Чат</string>
+    <string name="voice_chat_desc">Говори природно зKlarою</string>
+    <string name="type_my_info">Набрати Мою Інфо</string>
+    <string name="type_my_info_desc">Напиши у своєму темпі</string>
+    <string name="use_wizard">Використати Майстер</string>
+    <string name="use_wizard_desc">Керовані покрокові питання</string>
+    
+    <!-- Voice Chat Screen -->
+    <string name="voice_chat_title">Голосовий Чат</string>
+    <string name="you_speaking">Ти говориш…</string>
+    <string name="clara_responding">Klara відповідає…</string>
+    <string name="waiting_to_speak">Чекаю на твою промову…</string>
+    <string name="tap_to_start_conversation">Натисни, щоб почати розмову</string>
+    <string name="tap_to_start">Натисни, щоб почати</string>
+    <string name="tap_to_end">Натисни, щоб завершити</string>
+    <string name="listening">Слухаю…</string>
+    
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="mic_permission_required">Потрібен Дозвіл на Мікрофон</string>
+    <string name="mic_permission_message">Голосовий чат потребує доступу до мікрофона. Будь ласка, надайте дозвіл у Налаштуваннях.</string>
+    <string name="ok">OK</string>
+</resources>
+

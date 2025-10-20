@@ -8,11 +8,9 @@ import kotlinx.serialization.Serializable
 data class OpenAIRequestGPT5(
     val model: String,
     val messages: List<OpenAIMessage>,
-    val temperature: Double = 0.4,
-    @SerialName("top_p")
-    val topP: Double = 0.9,
     @SerialName("max_completion_tokens")
     val maxCompletionTokens: Int
+    // GPT-5 only supports default temperature (1) and top_p - custom values not allowed
 )
 
 @Serializable
@@ -67,3 +65,7 @@ data class OpenAIConfig(
     val apiKey: String = ""
 )
 
+@Serializable
+data class WhisperResponse(
+    val text: String
+)

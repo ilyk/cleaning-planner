@@ -11,6 +11,7 @@ import com.ilyk.cleaningplanner.feature.clara.ui.intake.TypeIntakeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.AIAssistantSettingsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.settings.Avatar3DSettingsScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.setup.APIKeySetupScreen
+import com.ilyk.cleaningplanner.feature.clara.ui.voice.VoiceChatScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.welcome.WelcomeScreen
 import com.ilyk.cleaningplanner.feature.clara.ui.wizard.WizardScreen
 import com.ilyk.cleaningplanner.ui.home.HomeScreen
@@ -20,6 +21,7 @@ sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
     data object APIKeySetup : Screen("api_key_setup")
     data object Welcome : Screen("welcome")
+    data object VoiceChat : Screen("voice_chat")
     data object ChatIntake : Screen("chat_intake")
     data object TypeIntake : Screen("type_intake")
     data object Wizard : Screen("wizard")
@@ -75,7 +77,7 @@ fun CleaningPlannerNavHost(
         composable(Screen.Welcome.route) {
             WelcomeScreen(
                 onNavigateToChat = {
-                    navController.navigate(Screen.ChatIntake.route)
+                    navController.navigate(Screen.VoiceChat.route)
                 },
                 onNavigateToTypeInfo = {
                     navController.navigate(Screen.TypeIntake.route)
@@ -85,6 +87,21 @@ fun CleaningPlannerNavHost(
                 },
                 onNavigateToAISettings = {
                     navController.navigate(Screen.AISettings.route)
+                }
+            )
+        }
+
+        composable(Screen.VoiceChat.route) {
+            VoiceChatScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDashboard = { conversationTranscript ->
+                    // TODO: Process and save conversation data to database
+                    // For now, navigate to Home (dashboard)
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                    }
                 }
             )
         }
