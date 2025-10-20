@@ -277,7 +277,10 @@ When user says "done/finish/stop" AND you have all 7 pieces → "Perfect! I have
 7. EVERY response must be in $langName
 8. EVERY question must gather one of the 7 pieces
 
-STAY LASER-FOCUSED. Every question must gather one of the 7 pieces. NO exceptions."""
+STAY LASER-FOCUSED. Every question must gather one of the 7 pieces. NO exceptions.
+
+🚀 START THE CONVERSATION NOW:
+Begin immediately with your greeting in $langName. Do not wait for user input."""
         
         val config = JSONObject().apply {
             put("type", "session.update")
@@ -456,11 +459,10 @@ STAY LASER-FOCUSED. Every question must gather one of the 7 pieces. NO exception
         Log.d(TAG, "[LanguageSwitch] Step 6: Waiting for session.updated (100ms)")
         kotlinx.coroutines.delay(100)
         
-        // 7. Trigger new greeting in new language
-        Log.d(TAG, "[LanguageSwitch] Step 7: Starting new response in $newLanguage")
-        isCancelling = false
-        _isSwitchingLanguage.value = false
-        triggerInitialGreeting(newLanguage)
+            // 7. Session config will handle the greeting automatically
+            Log.d(TAG, "[LanguageSwitch] Step 7: Session ready in $newLanguage")
+            isCancelling = false
+            _isSwitchingLanguage.value = false
         
         val totalTime = System.currentTimeMillis() - cancelStartTime
         Log.d(TAG, "[LanguageSwitch] COMPLETE: Total time ${totalTime}ms, droppedDeltas=$droppedDeltas")
@@ -535,36 +537,9 @@ STAY LASER-FOCUSED. Every question must gather one of the 7 pieces. NO exception
         conversationLog.clear()
     }
     
-    private fun triggerInitialGreeting(language: String) {
-        val langName = when (language) {
-            "es" -> "Spanish"
-            "fr" -> "French"
-            "de" -> "German"
-            "uk" -> "Ukrainian"
-            else -> "English"
-        }
-        
-        // Send a response.create to make Clara speak first IN THE CORRECT LANGUAGE
-        val currentTurn = turnVersion
-        val responseMessage = JSONObject().apply {
-            put("type", "response.create")
-            put("response", JSONObject().apply {
-                put("modalities", JSONArray(listOf("text", "audio")))
-                put("instructions", """You MUST respond in $langName. 
-                    |Say EXACTLY this in $langName (translate if needed):
-                    |"Hi! I'm Clara. I'll help set up your cleaning plan. Tell me about your home - how many rooms do you have, and what types?"
-                    |
-                    |Remember: Respond ONLY in $langName. Do not use English.""".trimMargin())
-                // Metadata for turn tracking
-                put("metadata", JSONObject().apply {
-                    put("turnVersion", currentTurn)
-                    put("language", language)
-                })
-            })
-        }
-        webSocket?.send(responseMessage.toString())
-        Log.d(TAG, "Triggered Clara's initial greeting in $langName (turn=$currentTurn)")
-    }
+    // REMOVED: triggerInitialGreeting method
+    // The session config now handles the initial greeting automatically
+    // This prevents language mixing by avoiding conflicting instructions
     
     inner class RealtimeWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -593,23 +568,23 @@ STAY LASER-FOCUSED. Every question must gather one of the 7 pieces. NO exception
                         Log.d(TAG, "Session created")
                     }
                     
-                    "session.updated" -> {
-                        Log.d(TAG, "Session updated - configuration applied")
-                        
-                        // NOW it's safe to start the conversation
-                        if (!sessionConfigured) {
-                            sessionConfigured = true
+                        "session.updated" -> {
+                            Log.d(TAG, "Session updated - configuration applied")
                             
-                            serviceScope.launch {
-                                // Start recording
-                                startAudioRecording()
+                            // NOW it's safe to start the conversation
+                            if (!sessionConfigured) {
+                                sessionConfigured = true
                                 
-                                // Wait a moment, then trigger greeting
-                                kotlinx.coroutines.delay(500)
-                                triggerInitialGreeting(currentLanguage)
+                                serviceScope.launch {
+                                    // Start recording
+                                    startAudioRecording()
+                                    
+                                    // Session config already includes the initial greeting
+                                    // No need to trigger additional greeting
+                                    Log.d(TAG, "Session ready - Clara will greet automatically")
+                                }
                             }
                         }
-                    }
                     
                     "response.created" -> {
                         val response = json.optJSONObject("response")
