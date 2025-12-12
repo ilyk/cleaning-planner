@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":data:database"))
     implementation(project(":data:network"))
+    implementation(project(":data:repository"))
     
     // Room
     implementation(libs.room.runtime)
