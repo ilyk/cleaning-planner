@@ -4,10 +4,14 @@ import android.content.Context
 import androidx.room.Room
 import com.ilyk.cleaningplanner.data.database.CleaningPlannerDatabase
 import com.ilyk.cleaningplanner.data.database.dao.CommentChipDao
+import com.ilyk.cleaningplanner.data.database.dao.HistoryEntryDao
 import com.ilyk.cleaningplanner.data.database.dao.HouseholdDao
 import com.ilyk.cleaningplanner.data.database.dao.MemberDao
+import com.ilyk.cleaningplanner.data.database.dao.PendingOpsDao
+import com.ilyk.cleaningplanner.data.database.dao.PlanDao
 import com.ilyk.cleaningplanner.data.database.dao.RoomDao
 import com.ilyk.cleaningplanner.data.database.dao.ScheduleDao
+import com.ilyk.cleaningplanner.data.database.dao.SuggestionDao
 import com.ilyk.cleaningplanner.data.database.dao.TaskDao
 import com.ilyk.cleaningplanner.data.database.dao.TemplateDao
 import com.ilyk.cleaningplanner.data.database.dao.UserDao
@@ -74,6 +78,26 @@ object DatabaseModule {
     @Provides
     fun provideScheduleDao(database: CleaningPlannerDatabase): ScheduleDao {
         return database.scheduleDao()
+    }
+
+    @Provides
+    fun provideHistoryEntryDao(database: CleaningPlannerDatabase): HistoryEntryDao {
+        return database.historyEntryDao()
+    }
+
+    @Provides
+    fun providePlanDao(database: CleaningPlannerDatabase): PlanDao {
+        return database.planDao()
+    }
+
+    @Provides
+    fun providePendingOpsDao(database: CleaningPlannerDatabase): PendingOpsDao {
+        return database.pendingOpsDao()
+    }
+
+    @Provides
+    fun provideSuggestionDao(database: CleaningPlannerDatabase): SuggestionDao {
+        return database.suggestionDao()
     }
 }
 

@@ -1,0 +1,50 @@
+[package]
+name = "clara-oss-integrations"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+clara-protocol = { path = "../protocol" }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+bytes = { workspace = true }
+tokio = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+
+# Real OSS security library from Red Asgard (crates.io)
+llm-security = { version = "0.1", optional = true }
+
+# Future integrations (not yet on crates.io)
+# path-security = { version = "0.1", optional = true }
+# blockchain-runtime = { version = "0.1", optional = true }
+# worker-capabilities = { version = "0.1", optional = true }
+# module-registry = { version = "0.1", optional = true }
+# threat-intel = { version = "0.1", optional = true }
+# quantum-shield = { version = "0.1", optional = true }
+
+[features]
+default = []
+# Real llm-security integration
+use-llm-security = ["dep:llm-security"]
+# Stub features for future integrations
+use-path-security = []
+use-blockchain-runtime = []
+use-worker-capabilities = []
+use-module-registry = []
+use-threat-intel = []
+use-quantum-shield = []
+all-real = [
+    "use-llm-security",
+    "use-path-security",
+    "use-blockchain-runtime",
+    "use-worker-capabilities",
+    "use-module-registry",
+    "use-threat-intel",
+    "use-quantum-shield",
+]

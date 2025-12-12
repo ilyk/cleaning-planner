@@ -5,73 +5,46 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.ilyk.cleaningplanner.core.model.TaskStatus
 import com.ilyk.cleaningplanner.data.database.entities.TaskEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 
+/**
+ * DAO for managing Task entities in the CleanFlow database
+ */
 @Dao
 interface TaskDao {
     
-    @Query("SELECT * FROM tasks WHERE householdId = :householdId ORDER BY dueDate ASC")
-    fun observeAll(householdId: String): Flow<List<TaskEntity>>
+    @Query("SELECT * FROM cleanflow_tasks WHERE planId = :planId ORDER BY createdAt ASC")
+    fun getTasksByPlanId(planId: String): Flow<List<TaskEntity>>
 
-    @Query("""
-        SELECT * FROM tasks 
-        WHERE householdId = :householdId 
-        AND date(dueDate / 1000, 'unixepoch') = date('now')
-        ORDER BY dueDate ASC
-    """)
-    fun observeToday(householdId: String): Flow<List<TaskEntity>>
+    @Query("SELECT * FROM cleanflow_tasks WHERE id = :taskId")
+    suspend fun getTaskById(taskId: String): TaskEntity?
 
-    @Query("""
-        SELECT * FROM tasks 
-        WHERE householdId = :householdId 
-        AND status = :status
-        ORDER BY dueDate ASC
-    """)
-    fun observeByStatus(householdId: String, status: TaskStatus): Flow<List<TaskEntity>>
-
-    @Query("SELECT * FROM tasks WHERE id = :taskId")
-    suspend fun getById(taskId: String): TaskEntity?
-
-    @Query("SELECT * FROM tasks WHERE assigneeId = :memberId ORDER BY dueDate ASC")
-    fun observeByAssignee(memberId: String): Flow<List<TaskEntity>>
-
-    @Query("SELECT * FROM tasks WHERE roomId = :roomId ORDER BY dueDate ASC")
-    fun observeByRoom(roomId: String): Flow<List<TaskEntity>>
-
-    @Query("SELECT * FROM tasks WHERE pendingSync = 1")
-    suspend fun getPendingSync(): List<TaskEntity>
+    @Query("SELECT * FROM cleanflow_tasks WHERE assignedTo = :memberId ORDER BY createdAt ASC")
+    fun getTasksByAssignee(memberId: String): Flow<List<TaskEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(task: TaskEntity)
+    suspend fun insertTask(task: TaskEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(tasks: List<TaskEntity>)
+    suspend fun insertTasks(tasks: List<TaskEntity>)
 
     @Update
-    suspend fun update(task: TaskEntity)
+    suspend fun updateTask(task: TaskEntity)
 
-    @Query("UPDATE tasks SET status = :status, pendingSync = 1 WHERE id = :taskId")
-    suspend fun updateStatus(taskId: String, status: TaskStatus)
+    @Query("UPDATE cleanflow_tasks SET completedAt = :completedAt WHERE id = :taskId")
+    suspend fun markCompleted(taskId: String, completedAt: Long)
 
-    @Query("UPDATE tasks SET actualMin = :minutes, pendingSync = 1 WHERE id = :taskId")
-    suspend fun updateActualTime(taskId: String, minutes: Int)
+    @Query("UPDATE cleanflow_tasks SET skippedAt = :skippedAt WHERE id = :taskId")
+    suspend fun markSkipped(taskId: String, skippedAt: Long)
 
-    @Query("UPDATE tasks SET notes = :notes, pendingSync = 1 WHERE id = :taskId")
-    suspend fun updateNotes(taskId: String, notes: String?)
+    @Query("UPDATE cleanflow_tasks SET assignedTo = :memberId WHERE id = :taskId")
+    suspend fun assignTask(taskId: String, memberId: String?)
 
-    @Query("UPDATE tasks SET assigneeId = :memberId, pendingSync = 1 WHERE id = :taskId")
-    suspend fun updateAssignee(taskId: String, memberId: String?)
+    @Query("DELETE FROM cleanflow_tasks WHERE id = :taskId")
+    suspend fun deleteTask(taskId: String)
 
-    @Query("UPDATE tasks SET pendingSync = 0 WHERE id = :taskId")
-    suspend fun clearPendingSync(taskId: String)
-
-    @Query("DELETE FROM tasks WHERE id = :taskId")
-    suspend fun delete(taskId: String)
-
-    @Query("DELETE FROM tasks WHERE householdId = :householdId")
-    suspend fun deleteAllByHousehold(householdId: String)
+    @Query("DELETE FROM cleanflow_tasks WHERE planId = :planId")
+    suspend fun deleteTasksByPlanId(planId: String)
 }
 

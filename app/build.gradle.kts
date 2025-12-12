@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -22,6 +23,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     buildTypes {
@@ -71,6 +76,7 @@ dependencies {
 
     // Feature modules
     implementation(project(":feature:auth"))
+    implementation(project(":feature:clara"))
     implementation(project(":feature:household"))
     implementation(project(":feature:rooms"))
     implementation(project(":feature:qr"))
@@ -110,10 +116,21 @@ dependencies {
 
     // DataStore
     implementation(libs.datastore.preferences)
+    implementation(libs.datastore.core)
+
+    // ML Kit
+    implementation(libs.mlkit.barcode.scanning)
+    implementation(libs.mlkit.text.recognition)
+    implementation(libs.zxing.core)
+    implementation(libs.zxing.android)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    
+    // Kotlinx libraries
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.json)
 
     // CameraX
     implementation(libs.camerax.core)
@@ -133,5 +150,10 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
+}
+
+ksp {
+    arg("room.incremental", "true")
+    arg("room.expandProjection", "true")
 }
 

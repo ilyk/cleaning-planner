@@ -12,7 +12,7 @@ data class Task(
     val templateId: String? = null,
     val assigneeId: String? = null,
     val dueDate: Instant? = null,
-    val status: TaskStatus = TaskStatus.TODO,
+    val status: TaskStatus = TaskStatus.Pending,
     val actualMin: Int? = null,
     val estMin: Int? = null,
     val notes: String? = null

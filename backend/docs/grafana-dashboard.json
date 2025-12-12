@@ -1,0 +1,230 @@
+{
+  "dashboard": {
+    "title": "Clara Backend - Realtime Health & Safety",
+    "tags": ["clara", "backend", "realtime"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "TTFT p95 Latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, clara_ttft_ms_bucket)",
+            "legendFormat": "p95 TTFT"
+          },
+          {
+            "expr": "histogram_quantile(0.50, clara_ttft_ms_bucket)",
+            "legendFormat": "p50 TTFT"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "ms",
+            "format": "ms"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Active WebSocket Connections",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "clara_ws_connections",
+            "legendFormat": "Active Connections"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "connections",
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Error Rate by Code",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(clara_errors_total[5m])",
+            "legendFormat": "{{code}}"
+          }
+        ],
+        "stack": true,
+        "yaxes": [
+          {
+            "label": "errors/sec",
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Guardrail Verdicts by Action",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(clara_guardrail_verdicts_total[5m])",
+            "legendFormat": "{{action}}"
+          }
+        ],
+        "stack": true,
+        "yaxes": [
+          {
+            "label": "verdicts/sec",
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "Guardrail Verdicts by Category",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum by (category) (clara_guardrail_verdicts_total)",
+            "legendFormat": "{{category}}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 6,
+        "title": "Barge-in Stop Time (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, clara_barge_in_stop_ms_bucket)",
+            "legendFormat": "p95 Stop Time"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "ms",
+            "format": "ms",
+            "max": 100
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [50],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "5m",
+          "frequency": "10s",
+          "handler": 1,
+          "name": "Barge-in Stop > 50ms",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "id": 7,
+        "title": "Tool Calls (Printable + Family)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(clara_tool_calls_total{tool=\"printable\"}[5m])",
+            "legendFormat": "Printable"
+          },
+          {
+            "expr": "rate(clara_tool_calls_total{tool=\"family_assign\"}[5m])",
+            "legendFormat": "Family Assign"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "calls/sec",
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        }
+      },
+      {
+        "id": 8,
+        "title": "WebSocket Disconnects",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(clara_ws_disconnects_total[5m])",
+            "legendFormat": "{{reason}}"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "disconnects/sec",
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        }
+      }
+    ]
+  }
+}
+

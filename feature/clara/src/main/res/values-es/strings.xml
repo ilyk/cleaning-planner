@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Welcome Screen -->
+    <string name="how_would_you_like_to_begin">¿Cómo te gustaría comenzar?</string>
+    <string name="voice_chat">Chat por Voz</string>
+    <string name="voice_chat_desc">Habla naturalmente con Clara</string>
+    <string name="type_my_info">Escribir Mi Info</string>
+    <string name="type_my_info_desc">Escríbelo a tu ritmo</string>
+    <string name="use_wizard">Usar Asistente</string>
+    <string name="use_wizard_desc">Preguntas guiadas paso a paso</string>
+    
+    <!-- Voice Chat Screen -->
+    <string name="voice_chat_title">Chat por Voz</string>
+    <string name="you_speaking">Estás hablando…</string>
+    <string name="clara_responding">Clara está respondiendo…</string>
+    <string name="waiting_to_speak">Esperando que hables…</string>
+    <string name="tap_to_start_conversation">Toca para comenzar conversación</string>
+    <string name="tap_to_start">Toca para comenzar</string>
+    <string name="tap_to_end">Toca para terminar</string>
+    <string name="listening">Escuchando…</string>
+    
+    <!-- Common -->
+    <string name="back">Atrás</string>
+    <string name="mic_permission_required">Permiso de Micrófono Requerido</string>
+    <string name="mic_permission_message">El chat por voz requiere acceso al micrófono. Por favor, concede el permiso en Configuración.</string>
+    <string name="ok">OK</string>
+</resources>
+

@@ -1,0 +1,42 @@
+version: "2025-10-28.3"
+inputs:
+  vad: true
+  lid:
+    - en
+    - uk
+    - cs
+  keyword_threshold: 0.65
+  embed_thresholds:
+    harassment: 0.72
+    sexual: 0.68
+    violence: 0.70
+    self_harm: 0.60
+    hate: 0.65
+    pii: 0.62
+
+actions:
+  R3:
+    - hard_block
+    - safe_script
+  R2:
+    - mask_terms
+    - deny_tools
+  R1:
+    - tone_mitigate
+  R0:
+    - allow
+
+capabilities:
+  allowed:
+    - ALLOW_CHAT
+    - ALLOW_PLAN_READ
+    - ALLOW_PLAN_WRITE
+  denied_on_r2:
+    - DENY_TOOLS
+  denied_on_r3:
+    - HARD_BLOCK
+    - DENY_TOOLS
+
+safe_script: "I can't process that request. How else can I help you today?"
+
+

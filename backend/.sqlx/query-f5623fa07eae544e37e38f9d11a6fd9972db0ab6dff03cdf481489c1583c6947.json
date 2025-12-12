@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT\n                    task_id,\n                    kind::text as \"kind!\",\n                    duration_sec,\n                    comment,\n                    source,\n                    te.created_at\n                FROM telemetry_events te\n                JOIN plans p ON te.task_id = ANY(\n                    SELECT id FROM plan_tasks WHERE plan_id = p.id\n                )\n                WHERE p.home_id = $1\n                ORDER BY te.created_at DESC\n                LIMIT 50\n                ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "task_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "kind!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "duration_sec",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "comment",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "source",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      null,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "f5623fa07eae544e37e38f9d11a6fd9972db0ab6dff03cdf481489c1583c6947"
+}

@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO idempotency_keys (key, request_hash, response, expires_at)\n             VALUES ($1, $2, $3, to_timestamp($4))\n             ON CONFLICT (key) DO UPDATE SET\n                 request_hash = EXCLUDED.request_hash,\n                 response = EXCLUDED.response,\n                 expires_at = EXCLUDED.expires_at",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Jsonb",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c4f85a3b224cd948147a859cc58f587e96b434c894cefd4b57f619b1b5659503"
+}

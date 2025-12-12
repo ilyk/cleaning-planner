@@ -1,0 +1,32 @@
+[package]
+name = "clara-stream"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+clara-protocol = { path = "../protocol" }
+clara-config = { path = "../config" }
+clara-session = { path = "../session" }
+clara-guardrails = { path = "../guardrails" }
+clara-llm = { path = "../llm" }
+clara-tools = { path = "../tools" }
+clara-telemetry = { path = "../telemetry" }
+clara-store = { path = "../store" }
+
+axum = { workspace = true }
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+base64 = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+
+[dev-dependencies]
+

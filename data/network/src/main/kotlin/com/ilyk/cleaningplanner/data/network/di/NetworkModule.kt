@@ -1,98 +1,138 @@
 package com.ilyk.cleaningplanner.data.network.di
 
-import com.ilyk.cleaningplanner.data.network.api.AuthApi
-import com.ilyk.cleaningplanner.data.network.api.HouseholdApi
-import com.ilyk.cleaningplanner.data.network.api.RoomApi
-import com.ilyk.cleaningplanner.data.network.api.TaskApi
-import com.ilyk.cleaningplanner.data.network.api.TemplateApi
+import com.ilyk.cleaningplanner.data.remote.api.*
+import com.ilyk.cleaningplanner.data.network.api.CleanFlowApi
+import com.ilyk.cleaningplanner.data.remote.interceptor.CommonHeadersInterceptor
+import com.ilyk.cleaningplanner.data.remote.interceptor.ErrorHandlingInterceptor
+import com.ilyk.cleaningplanner.data.remote.websocket.ClaraWebSocketClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import okhttp3.MediaType.Companion.toMediaType
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
+    
     @Provides
     @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-        encodeDefaults = true
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
         }
     }
-
+    
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
+        commonHeadersInterceptor: CommonHeadersInterceptor,
+        errorHandlingInterceptor: ErrorHandlingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(commonHeadersInterceptor)
+            .addInterceptor(errorHandlingInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
-
+    
+    @Provides
+    @Singleton
+    fun provideCommonHeadersInterceptor(
+        tokenProvider: () -> String,
+        versions: com.ilyk.cleaningplanner.data.remote.interceptor.ClientVersions
+    ): CommonHeadersInterceptor {
+        return CommonHeadersInterceptor(tokenProvider, versions)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideErrorHandlingInterceptor(): ErrorHandlingInterceptor {
+        return ErrorHandlingInterceptor()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideClientVersions(): com.ilyk.cleaningplanner.data.remote.interceptor.ClientVersions {
+        return com.ilyk.cleaningplanner.data.remote.interceptor.ClientVersions()
+    }
+    
     @Provides
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        json: Json
+        json: Json,
+        baseUrl: String
     ): Retrofit {
-        val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://api.cleaningplanner.ilyk.im/")
+            .baseUrl(baseUrl)
             .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
-
+    
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi {
-        return retrofit.create(AuthApi::class.java)
+    fun provideBaseUrl(): String {
+        return "http://localhost:8080" // Clara backend server
     }
-
+    
     @Provides
     @Singleton
-    fun provideHouseholdApi(retrofit: Retrofit): HouseholdApi {
-        return retrofit.create(HouseholdApi::class.java)
+    fun providePlansApi(retrofit: Retrofit): PlansApi {
+        return retrofit.create(PlansApi::class.java)
     }
-
+    
     @Provides
     @Singleton
-    fun provideRoomApi(retrofit: Retrofit): RoomApi {
-        return retrofit.create(RoomApi::class.java)
+    fun provideFamilyApi(retrofit: Retrofit): FamilyApi {
+        return retrofit.create(FamilyApi::class.java)
     }
-
+    
     @Provides
     @Singleton
-    fun provideTaskApi(retrofit: Retrofit): TaskApi {
-        return retrofit.create(TaskApi::class.java)
+    fun provideTelemetryApi(retrofit: Retrofit): TelemetryApi {
+        return retrofit.create(TelemetryApi::class.java)
     }
-
+    
     @Provides
     @Singleton
-    fun provideTemplateApi(retrofit: Retrofit): TemplateApi {
-        return retrofit.create(TemplateApi::class.java)
+    fun provideClaraApi(retrofit: Retrofit): ClaraApi {
+        return retrofit.create(ClaraApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideCleanFlowApi(retrofit: Retrofit): CleanFlowApi {
+        return retrofit.create(CleanFlowApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideClaraWebSocketClient(
+        okHttpClient: OkHttpClient,
+        baseUrl: String
+    ): ClaraWebSocketClient {
+        return ClaraWebSocketClient(okHttpClient, baseUrl)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideTokenProvider(): () -> String {
+        // TODO: Implement proper token management
+        return { "mock-token" }
     }
 }
-

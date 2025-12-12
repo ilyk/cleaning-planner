@@ -51,20 +51,9 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# IntelliJ
+# IntelliJ / Android Studio
+.idea/
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-.idea/jarRepositories.xml
-# Android Studio 3 in .gitignore file.
-.idea/caches
-.idea/modules.xml
-# Comment next line if keeping position of elements in Navigation Editor is relevant for you
-.idea/navEditor.xml
 
 # Keystore files
 *.jks
@@ -97,4 +86,19 @@ lint/intermediates/
 lint/generated/
 lint/outputs/
 lint/tmp/
+
+# Rust / Backend
+backend/target/
+target/
+backend/.env
+
+# IDE / Editor
+.vscode/
+.cursor/
+
+# Logs and temp files
+*.log
+crash_logs*.txt
+build_output.txt
+generation_crash_logs.txt
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Welcome Screen -->
+    <string name="how_would_you_like_to_begin">How would you like to begin?</string>
+    <string name="voice_chat">Voice Chat</string>
+    <string name="voice_chat_desc">Talk naturally with Clara</string>
+    <string name="type_my_info">Type My Info</string>
+    <string name="type_my_info_desc">Write it all out at your pace</string>
+    <string name="use_wizard">Use Wizard</string>
+    <string name="use_wizard_desc">Guided step-by-step questions</string>
+    
+    <!-- Voice Chat Screen -->
+    <string name="voice_chat_title">Voice Chat</string>
+    <string name="you_speaking">You\'re speaking…</string>
+    <string name="clara_responding">Clara is responding…</string>
+    <string name="waiting_to_speak">Waiting for you to speak…</string>
+    <string name="tap_to_start_conversation">Tap to start conversation</string>
+    <string name="tap_to_start">Tap to start</string>
+    <string name="tap_to_end">Tap to end</string>
+    <string name="listening">Listening…</string>
+    
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="mic_permission_required">Microphone Permission Required</string>
+    <string name="mic_permission_message">Voice chat requires microphone access. Please grant permission in Settings.</string>
+    <string name="ok">OK</string>
+</resources>
+

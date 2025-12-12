@@ -4,9 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class TaskStatus {
-    TODO,
-    DOING,
-    DONE,
-    SKIPPED
+    Pending,
+    Done,
+    Skipped
 }
 
