@@ -7,17 +7,25 @@ import com.ilyk.cleaningplanner.data.database.converters.Converters
 import com.ilyk.cleaningplanner.data.database.dao.Avatar3DDao
 import com.ilyk.cleaningplanner.data.database.dao.CommentChipDao
 import com.ilyk.cleaningplanner.data.database.dao.ConversationDao
+import com.ilyk.cleaningplanner.data.database.dao.HistoryEntryDao
 import com.ilyk.cleaningplanner.data.database.dao.HouseholdDao
 import com.ilyk.cleaningplanner.data.database.dao.MemberDao
+import com.ilyk.cleaningplanner.data.database.dao.PendingOpsDao
+import com.ilyk.cleaningplanner.data.database.dao.PlanDao
 import com.ilyk.cleaningplanner.data.database.dao.RoomDao
 import com.ilyk.cleaningplanner.data.database.dao.ScheduleDao
+import com.ilyk.cleaningplanner.data.database.dao.SuggestionDao
 import com.ilyk.cleaningplanner.data.database.dao.TaskDao
 import com.ilyk.cleaningplanner.data.database.dao.TemplateDao
 import com.ilyk.cleaningplanner.data.database.dao.UserDao
-import com.ilyk.cleaningplanner.data.database.entities.ChipUsageEntity
 import com.ilyk.cleaningplanner.data.database.entities.CommentChipEntity
+import com.ilyk.cleaningplanner.data.database.entities.ChipUsageEntity
+import com.ilyk.cleaningplanner.data.database.entities.HistoryEntryEntity
+import com.ilyk.cleaningplanner.data.database.entities.SuggestionEntity
 import com.ilyk.cleaningplanner.data.database.entities.HouseholdEntity
 import com.ilyk.cleaningplanner.data.database.entities.MemberEntity
+import com.ilyk.cleaningplanner.data.database.entities.PendingOpEntity
+import com.ilyk.cleaningplanner.data.database.entities.PlanEntity
 import com.ilyk.cleaningplanner.data.database.entities.RoomEntity
 import com.ilyk.cleaningplanner.data.database.entities.ScheduleEntity
 import com.ilyk.cleaningplanner.data.database.entities.TaskEntity
@@ -38,9 +46,13 @@ import com.ilyk.cleaningplanner.data.database.entity.ConversationEntity
         ChipUsageEntity::class,
         ScheduleEntity::class,
         Avatar3DEntity::class,
-        ConversationEntity::class
+        ConversationEntity::class,
+        HistoryEntryEntity::class,
+        SuggestionEntity::class,
+        PlanEntity::class,
+        PendingOpEntity::class
     ],
-    version = 3,
+    version = 6,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -55,5 +67,9 @@ abstract class CleaningPlannerDatabase : RoomDatabase() {
     abstract fun scheduleDao(): ScheduleDao
     abstract fun avatar3DDao(): Avatar3DDao
     abstract fun conversationDao(): ConversationDao
+    abstract fun historyEntryDao(): HistoryEntryDao
+    abstract fun suggestionDao(): SuggestionDao
+    abstract fun planDao(): PlanDao
+    abstract fun pendingOpsDao(): PendingOpsDao
 }
 

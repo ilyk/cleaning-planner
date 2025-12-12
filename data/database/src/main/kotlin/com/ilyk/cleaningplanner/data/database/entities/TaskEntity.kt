@@ -1,92 +1,75 @@
 package com.ilyk.cleaningplanner.data.database.entities
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.ilyk.cleaningplanner.core.model.Task
-import com.ilyk.cleaningplanner.core.model.TaskStatus
+import com.ilyk.cleaningplanner.domain.model.Task
 import kotlinx.datetime.Instant
 
+/**
+ * Room entity for Task with offline caching
+ */
 @Entity(
-    tableName = "tasks",
-    foreignKeys = [
-        ForeignKey(
-            entity = HouseholdEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["householdId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = RoomEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["roomId"],
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
-            entity = TemplateEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["templateId"],
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
-            entity = MemberEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["assigneeId"],
-            onDelete = ForeignKey.SET_NULL
-        )
-    ],
+    tableName = "cleanflow_tasks",
     indices = [
-        Index(value = ["householdId"]),
-        Index(value = ["dueDate"]),
-        Index(value = ["assigneeId"]),
-        Index(value = ["roomId"]),
-        Index(value = ["templateId"]),
-        Index(value = ["status"])
+        Index(value = ["id"]),
+        Index(value = ["planId"])
     ]
 )
 data class TaskEntity(
     @PrimaryKey
     val id: String,
-    val householdId: String,
+    val planId: String,
     val title: String,
-    val roomId: String?,
-    val templateId: String?,
-    val assigneeId: String?,
-    val dueDate: Instant?,
-    val status: TaskStatus,
-    val actualMin: Int?,
-    val estMin: Int?,
-    val notes: String?,
-    val pendingSync: Boolean = false
-)
-
-fun TaskEntity.toModel() = Task(
-    id = id,
-    householdId = householdId,
-    title = title,
-    roomId = roomId,
-    templateId = templateId,
-    assigneeId = assigneeId,
-    dueDate = dueDate,
-    status = status,
-    actualMin = actualMin,
-    estMin = estMin,
-    notes = notes
-)
-
-fun Task.toEntity(pendingSync: Boolean = false) = TaskEntity(
-    id = id,
-    householdId = householdId,
-    title = title,
-    roomId = roomId,
-    templateId = templateId,
-    assigneeId = assigneeId,
-    dueDate = dueDate,
-    status = status,
-    actualMin = actualMin,
-    estMin = estMin,
-    notes = notes,
-    pendingSync = pendingSync
-)
+    val description: String?,
+    val priority: String,
+    val estimatedDurationMinutes: Int,
+    val toolsJson: String, // JSON serialized list
+    val tipsJson: String, // JSON serialized list
+    val qrCode: String?,
+    val assignedTo: String?,
+    val completedAt: Long?, // Store as timestamp
+    val skippedAt: Long?, // Store as timestamp
+    val createdAt: Long, // Store as timestamp
+    val updatedAt: Long // Store as timestamp
+) {
+    fun toModel(): Task {
+        return Task(
+            id = id,
+            title = title,
+            description = description,
+            priority = com.ilyk.cleaningplanner.domain.model.TaskPriority.valueOf(priority),
+            estimatedDurationMinutes = estimatedDurationMinutes,
+            tools = emptyList(), // TODO: Parse from JSON
+            tips = emptyList(), // TODO: Parse from JSON
+            qrCode = qrCode,
+            assignedTo = assignedTo,
+            completedAt = completedAt?.let { Instant.fromEpochMilliseconds(it) },
+            skippedAt = skippedAt?.let { Instant.fromEpochMilliseconds(it) },
+            createdAt = Instant.fromEpochMilliseconds(createdAt),
+            updatedAt = Instant.fromEpochMilliseconds(updatedAt)
+        )
+    }
+    
+    companion object {
+        fun fromModel(task: Task, planId: String): TaskEntity {
+            return TaskEntity(
+                id = task.id,
+                planId = planId,
+                title = task.title,
+                description = task.description,
+                priority = task.priority.name,
+                estimatedDurationMinutes = task.estimatedDurationMinutes,
+                toolsJson = "[]", // TODO: Serialize tools to JSON
+                tipsJson = "[]", // TODO: Serialize tips to JSON
+                qrCode = task.qrCode,
+                assignedTo = task.assignedTo,
+                completedAt = task.completedAt?.toEpochMilliseconds(),
+                skippedAt = task.skippedAt?.toEpochMilliseconds(),
+                createdAt = task.createdAt?.toEpochMilliseconds() ?: System.currentTimeMillis(),
+                updatedAt = task.updatedAt?.toEpochMilliseconds() ?: System.currentTimeMillis()
+            )
+        }
+    }
+}
 

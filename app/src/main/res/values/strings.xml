@@ -1,65 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cleaning Planner</string>
+    <string name="app_name">CleanFlow</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Today\'s Plan</string>
+    <string name="home_loading">Loading today\'s plan…</string>
+    <string name="home_error">Failed to load plan</string>
+    <string name="home_retry">Retry</string>
+    <string name="home_updating">Updating plan…</string>
+    <string name="home_refresh">Refresh plan</string>
+    
+    <!-- Modes -->
+    <string name="mode_focus">⚡ Focus</string>
+    <string name="mode_full_reset">🧼 Full Reset</string>
+    <string name="mode_low_energy">🌙 Low Energy</string>
+    <string name="mode_pet">🐾 Pet Mode</string>
+    
+    <!-- Task Priorities -->
+    <string name="priority_now">Now</string>
+    <string name="priority_next">Next</string>
+    <string name="priority_later">Later</string>
+    
+    <!-- Task Actions -->
+    <string name="task_done">Done</string>
+    <string name="task_skip">Skip</string>
+    <string name="task_completed">Completed</string>
+    <string name="task_skipped">Skipped</string>
+    <string name="task_tools">Tools needed</string>
+    <string name="task_tips">Tips available</string>
+    <string name="task_qr_code">QR Code available</string>
+    <string name="task_duration">%1$d minutes</string>
+    <string name="task_tools_count">%1$d tools</string>
+    <string name="task_tips_count">%1$d tips</string>
+    
+    <!-- Clara Voice -->
+    <string name="clara_title">Clara Voice Assistant</string>
+    <string name="clara_idle">Tap and hold to talk to Clara</string>
+    <string name="clara_listening">Listening…</string>
+    <string name="clara_thinking">Clara is thinking…</string>
+    <string name="clara_speaking">Clara is speaking…</string>
+    <string name="clara_ready">Ready for your next request</string>
+    <string name="clara_start_session">Start Clara session</string>
+    <string name="clara_end_session">End session</string>
+    <string name="clara_start_listening">Start listening</string>
+    <string name="clara_stop_listening">Stop listening</string>
+    <string name="clara_interrupt">Interrupt Clara</string>
+    <string name="clara_hold_to_talk">Hold to talk</string>
+    <string name="clara_release_to_stop">Release to stop</string>
+    <string name="clara_processing">Clara is processing…</string>
+    <string name="clara_tap_to_interrupt">Tap to interrupt</string>
+    <string name="clara_ready_next">Ready for your next request</string>
+    <string name="clara_avatar">Clara Avatar</string>
+    
+    <!-- Family Screen -->
+    <string name="family_title">Family Assignments</string>
+    <string name="family_member">%1$s</string>
+    <string name="family_assign_task">Assign task to %1$s</string>
+    <string name="family_reassign_task">Reassign task from %1$s to %2$s</string>
+    <string name="family_bulk_confirm">Confirm assignments</string>
+    
+    <!-- Task Detail -->
+    <string name="task_detail_title">Task Details</string>
+    <string name="task_detail_checklist">Checklist</string>
+    <string name="task_detail_estimated_duration">Estimated Duration</string>
+    <string name="task_detail_tools">Tools Needed</string>
+    <string name="task_detail_tips">Tips</string>
+    <string name="task_detail_qr_history">QR History</string>
+    <string name="task_detail_feedback">Send Feedback</string>
+    
+    <!-- Printables -->
+    <string name="printable_title">Printables</string>
+    <string name="printable_generate">Generate PDF</string>
+    <string name="printable_downloading">Downloading PDF…</string>
+    <string name="printable_open">Open PDF</string>
+    <string name="printable_share">Share PDF</string>
     
     <!-- Common -->
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="retry">Retry</string>
-    <string name="loading">Loading…</string>
-    <string name="error_generic">Something went wrong</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_error">Error</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_ok">OK</string>
+    <string name="common_done">Done</string>
+    <string name="common_close">Close</string>
+    <string name="common_expand">Expand</string>
+    <string name="common_collapse">Collapse</string>
+    <string name="common_refresh">Refresh</string>
+    <string name="common_share">Share</string>
+    <string name="common_print">Print</string>
     
-    <!-- Auth -->
-    <string name="login">Login</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <!-- Accessibility -->
+    <string name="a11y_live_region">Live region</string>
+    <string name="a11y_loading">Loading</string>
+    <string name="a11y_error">Error</string>
+    <string name="a11y_success">Success</string>
+    <string name="a11y_button">Button</string>
+    <string name="a11y_icon">Icon</string>
+    <string name="a11y_image">Image</string>
+    <string name="a11y_text">Text</string>
+    <string name="a11y_heading">Heading</string>
+    <string name="a11y_list">List</string>
+    <string name="a11y_list_item">List item</string>
+    <string name="a11y_card">Card</string>
+    <string name="a11y_chip">Chip</string>
+    <string name="a11y_switch">Switch</string>
+    <string name="a11y_slider">Slider</string>
+    <string name="a11y_progress_bar">Progress bar</string>
+    <string name="a11y_selected">Selected</string>
+    <string name="a11y_unselected">Unselected</string>
+    <string name="a11y_expanded">Expanded</string>
+    <string name="a11y_collapsed">Collapsed</string>
+    <string name="a11y_checked">Checked</string>
+    <string name="a11y_unchecked">Unchecked</string>
+    <string name="a11y_enabled">Enabled</string>
+    <string name="a11y_disabled">Disabled</string>
     
-    <!-- Home -->
-    <string name="board">Board</string>
-    <string name="rooms">Rooms</string>
-    <string name="settings">Settings</string>
+    <!-- Error Messages -->
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_auth">Authentication failed. Please log in again.</string>
+    <string name="error_permission">Permission denied. Please grant the required permission.</string>
+    <string name="error_audio">Audio error. Please check your microphone.</string>
+    <string name="error_websocket">Connection lost. Please try again.</string>
+    <string name="error_unknown">An unknown error occurred.</string>
     
-    <!-- Tasks -->
-    <string name="task_status_todo">To Do</string>
-    <string name="task_status_doing">Doing</string>
-    <string name="task_status_done">Done</string>
-    <string name="task_status_skipped">Skipped</string>
+    <!-- Success Messages -->
+    <string name="success_task_completed">Task completed successfully</string>
+    <string name="success_task_skipped">Task skipped</string>
+    <string name="success_task_assigned">Task assigned successfully</string>
+    <string name="success_plan_updated">Plan updated successfully</string>
+    <string name="success_clara_connected">Connected to Clara</string>
+    <string name="success_pdf_generated">PDF generated successfully</string>
     
-    <!-- Board -->
-    <string name="today">Today</string>
-    <string name="upcoming">Upcoming</string>
-    <string name="completed">Completed</string>
-    <string name="board_coming_soon">Board - Coming soon</string>
-    
-    <!-- Rooms -->
-    <string name="add_room">Add Room</string>
-    <string name="room_name">Room Name</string>
-    <string name="rooms_coming_soon">Rooms - Coming soon</string>
-    <string name="room_slug">Slug: %1$s</string>
-    <string name="open">Open</string>
-    <string name="qr">QR</string>
-    
-    <!-- QR -->
-    <string name="scan_qr">Scan QR</string>
-    <string name="start">Start</string>
-    <string name="skip">Skip</string>
-    <string name="done">Done</string>
-    <string name="camera_permission_required">Camera permission required</string>
-    <string name="back">Back</string>
-    
-    <!-- Quick Form -->
-    <string name="quick_action">Quick action: %1$s</string>
-    <string name="minutes">Minutes</string>
-    <string name="comments">Comments</string>
-    <string name="comment_ran_out_detergent">Ran out of detergent</string>
-    <string name="comment_low_trash_bags">Low trash bags</string>
-    <string name="comment_blocked_access">Blocked access</string>
-    
-    <!-- Settings -->
-    <string name="language">Language</string>
-    <string name="notifications">Notifications</string>
-    <string name="household_settings">Household Settings</string>
-    <string name="members">Members</string>
-    <string name="settings_coming_soon">Settings - Coming soon</string>
+    <!-- Feature Flags -->
+    <string name="feature_captions">Enable captions</string>
+    <string name="feature_offline_mode">Offline mode</string>
+    <string name="feature_voice_commands">Voice commands</string>
+    <string name="feature_family_assignments">Family assignments</string>
+    <string name="feature_printables">Printables</string>
+    <string name="feature_analytics">Analytics</string>
 </resources>
-

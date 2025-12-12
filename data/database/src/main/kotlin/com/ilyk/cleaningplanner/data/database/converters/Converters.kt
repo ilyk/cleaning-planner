@@ -6,10 +6,21 @@ import com.ilyk.cleaningplanner.core.model.Role
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 import com.ilyk.cleaningplanner.core.model.TemplateStep
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class Converters {
+    
+    @TypeConverter
+    fun fromLocalDate(value: LocalDate?): String? {
+        return value?.toString()
+    }
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? {
+        return value?.let { LocalDate.parse(it) }
+    }
     
     @TypeConverter
     fun fromInstant(value: Instant?): Long? {
@@ -24,11 +35,6 @@ class Converters {
     @TypeConverter
     fun fromRole(value: Role): String {
         return value.name
-    }
-
-    @TypeConverter
-    fun toRole(value: String): Role {
-        return Role.valueOf(value)
     }
 
     @TypeConverter

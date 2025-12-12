@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CleaningPlanner"
+rootProject.name = "CleanFlow"
 
 // App module
 include(":app")

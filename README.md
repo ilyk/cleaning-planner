@@ -1,4 +1,4 @@
-# Cleaning Planner - Android App
+# CleanFlow - Android App
 
 A family-first native Android application that makes cleaning easy with room-focused plans, QR check-ins, printable kid checklists, shared assignments, and light ML suggestions.
 
