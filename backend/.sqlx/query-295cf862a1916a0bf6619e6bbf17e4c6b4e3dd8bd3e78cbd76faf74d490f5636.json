@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, template_id, room_id, title, estimate_min, state::text as \"state!\", priority, section_id, assignee_member_id, metadata\n             FROM plan_tasks\n             WHERE plan_id = $1\n             ORDER BY section_id, priority",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "template_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "room_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "estimate_min",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "state!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "priority",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "section_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "assignee_member_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "metadata",
+        "type_info": "Jsonb"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      false,
+      null,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "295cf862a1916a0bf6619e6bbf17e4c6b4e3dd8bd3e78cbd76faf74d490f5636"
+}
