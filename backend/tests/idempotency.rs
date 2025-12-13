@@ -1,6 +1,6 @@
 //! Tests for idempotency behavior and concurrent duplicates
 
-use clara_domain::services::{IdempotencyStore, CachedResponse, MemoryIdempotencyStore};
+use cleanflow_domain::services::{IdempotencyStore, CachedResponse, MemoryIdempotencyStore};
 use serde_json::json;
 use std::sync::Arc;
 use tokio::time::{sleep, Duration};

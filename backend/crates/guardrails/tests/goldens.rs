@@ -3,7 +3,7 @@
 //! These tests validate guardrail behavior against known audio samples
 //! to ensure consistent verdicts.
 
-use clara_guardrails::{Action, GuardrailsPipeline};
+use cleanflow_guardrails::{Action, GuardrailsPipeline};
 
 /// Generate test audio data that simulates different scenarios
 fn make_audio_data(pattern: &[u8]) -> Vec<u8> {
@@ -153,8 +153,8 @@ fn allows_silent_audio() {
 #[cfg(feature = "use-llm-security")]
 #[test]
 fn policy_pack_changes_thresholds() {
-    use clara_guardrails::policy::PolicyEngine;
-    use clara_oss_integrations::llm_security_adapter;
+    use cleanflow_guardrails::policy::PolicyEngine;
+    use cleanflow_oss_integrations::llm_security_adapter;
     
     // Create provider
     let provider = llm_security_adapter::create_provider().unwrap();

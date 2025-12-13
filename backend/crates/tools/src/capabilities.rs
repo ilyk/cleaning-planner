@@ -1,6 +1,6 @@
 //! Capability masks for tool access control
 
-use clara_guardrails::Action;
+use cleanflow_guardrails::Action;
 use serde::{Deserialize, Serialize};
 
 /// Capability mask determining which tools are available

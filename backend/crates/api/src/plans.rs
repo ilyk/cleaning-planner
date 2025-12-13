@@ -6,8 +6,8 @@ use axum::{
     response::Json,
     Extension,
 };
-use clara_auth::AuthExtension;
-use clara_domain::{
+use cleanflow_auth::AuthExtension;
+use cleanflow_domain::{
     models::*,
     services::{PlanService, PrintableService},
 };

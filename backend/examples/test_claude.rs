@@ -1,8 +1,8 @@
 //! Simple test for Claude integration
-//! Run with: SQLX_OFFLINE=true cargo run --example test_claude -p clara-llm
+//! Run with: SQLX_OFFLINE=true cargo run --example test_claude -p cleanflow-llm
 
 use std::env;
-use clara_llm::{ClaudeAdapter, LlmRealtime, LlmEvent};
+use cleanflow_llm::{ClaudeAdapter, LlmRealtime, LlmEvent};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

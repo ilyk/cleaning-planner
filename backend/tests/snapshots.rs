@@ -1,6 +1,6 @@
 //! Snapshot tests for error envelopes and canonical JSON shapes
 
-use clara_domain::models::*;
+use cleanflow_domain::models::*;
 use serde_json::json;
 
 #[test]

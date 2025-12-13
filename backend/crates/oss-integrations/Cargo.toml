@@ -1,12 +1,12 @@
 [package]
-name = "clara-oss-integrations"
+name = "cleanflow-oss-integrations"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
+cleanflow-protocol = { path = "../protocol" }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 serde = { workspace = true }

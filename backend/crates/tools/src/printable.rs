@@ -1,13 +1,13 @@
 //! Printable PDF generation tool with real PDF generation
 
 use crate::{ToolError, ToolResult};
-use clara_store::Store;
+use cleanflow_store::Store;
 use serde::Deserialize;
 use serde_json::json;
 use std::path::PathBuf;
 
 #[cfg(feature = "use-path-security")]
-use clara_oss_integrations::path_security_adapter::{create_provider as create_path_provider, PathSecurityProvider};
+use cleanflow_oss_integrations::path_security_adapter::{create_provider as create_path_provider, PathSecurityProvider};
 
 #[derive(Debug, Deserialize)]
 struct GenerateArgs {
@@ -89,7 +89,7 @@ pub async fn generate(
 
 #[cfg(feature = "use-pdf")]
 async fn generate_pdf(
-    plan: &clara_store::Plan,
+    plan: &cleanflow_store::Plan,
     home_id: &str,
     format: &str,
 ) -> Result<PathBuf, ToolError> {
@@ -98,7 +98,7 @@ async fn generate_pdf(
     use std::io::BufWriter;
 
     // Create output directory if it doesn't exist
-    let output_dir = PathBuf::from(format!("/tmp/clara/printables/{}", home_id));
+    let output_dir = PathBuf::from(format!("/tmp/cleanflow/printables/{}", home_id));
     std::fs::create_dir_all(&output_dir)
         .map_err(|e| ToolError::Internal(anyhow::anyhow!("Failed to create output directory: {}", e)))?;
 
@@ -147,12 +147,12 @@ async fn generate_pdf(
 
 #[cfg(not(feature = "use-pdf"))]
 async fn generate_pdf(
-    plan: &clara_store::Plan,
+    plan: &cleanflow_store::Plan,
     home_id: &str,
     format: &str,
 ) -> Result<PathBuf, ToolError> {
     // Fallback: create a simple text file when PDF is not enabled
-    let output_dir = PathBuf::from(format!("/tmp/clara/printables/{}", home_id));
+    let output_dir = PathBuf::from(format!("/tmp/cleanflow/printables/{}", home_id));
     std::fs::create_dir_all(&output_dir)
         .map_err(|e| ToolError::Internal(anyhow::anyhow!("Failed to create output directory: {}", e)))?;
 

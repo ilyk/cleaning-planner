@@ -3,12 +3,12 @@
 use base64::Engine;
 use crate::{heartbeat::HeartbeatMonitor, turn_executor::TurnExecutor, validation::*};
 use axum::extract::ws::{Message, WebSocket};
-use clara_config::AppConfig;
-use clara_llm;
-use clara_protocol::{InboundMessage, OutboundMessage};
-use clara_session::SessionManager;
-use clara_store::Store;
-use clara_telemetry::Metrics;
+use cleanflow_config::AppConfig;
+use cleanflow_llm;
+use cleanflow_protocol::{InboundMessage, OutboundMessage};
+use cleanflow_session::SessionManager;
+use cleanflow_store::Store;
+use cleanflow_telemetry::Metrics;
 use futures::{stream::SplitSink, SinkExt, StreamExt};
 use std::sync::Arc;
 use tokio::sync::mpsc;
@@ -46,7 +46,7 @@ pub async fn handle_websocket(
     }
 
     // Create LLM adapter
-    let llm_config = clara_llm::LlmConfig {
+    let llm_config = cleanflow_llm::LlmConfig {
         provider: config.llm.provider.clone(),
         openai_api_key: config.llm.openai_api_key.clone(),
         openai_model: config.llm.openai_model.clone(),
@@ -55,7 +55,7 @@ pub async fn handle_websocket(
     };
     let use_mock = config.llm.provider == "mock"
         || (!config.features.openai_realtime && config.llm.provider == "openai");
-    let llm = clara_llm::create_adapter(&llm_config, use_mock);
+    let llm = cleanflow_llm::create_adapter(&llm_config, use_mock);
 
     let llm = match llm {
         Ok(adapter) => adapter,
@@ -191,7 +191,7 @@ async fn message_loop_with_initial(
                                     ).await {
                                         tracing::error!(error = %e, "Failed to handle inbound message");
                                         let error_msg = OutboundMessage::Error {
-                                            code: clara_protocol::ErrorCode::InternalError,
+                                            code: cleanflow_protocol::ErrorCode::InternalError,
                                             message: e.to_string(),
                                             request_id: None,
                                         };
@@ -201,7 +201,7 @@ async fn message_loop_with_initial(
                                 Err(e) => {
                                     tracing::warn!(error = %e, "Failed to parse message");
                                     let error_msg = OutboundMessage::Error {
-                                        code: clara_protocol::ErrorCode::InvalidRequest,
+                                        code: cleanflow_protocol::ErrorCode::InvalidRequest,
                                         message: format!("Invalid message: {}", e),
                                         request_id: None,
                                     };

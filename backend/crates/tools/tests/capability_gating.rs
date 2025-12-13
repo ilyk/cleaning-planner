@@ -3,10 +3,10 @@
 //! Validates that tool execution respects capability tokens
 //! and guardrail action outcomes.
 
-use clara_oss_integrations::capabilities_adapter::{
+use cleanflow_oss_integrations::capabilities_adapter::{
     Capability, CapabilitiesProvider, CapabilityToken,
 };
-use clara_guardrails::Action;
+use cleanflow_guardrails::Action;
 use std::collections::HashSet;
 use chrono::Utc;
 
@@ -21,7 +21,7 @@ fn create_test_token(caps: Vec<Capability>) -> CapabilityToken {
 /// Test: ALLOW_CHAT → plan read allowed, write denied
 #[test]
 fn allow_chat_permits_read_denies_write() {
-    let provider = clara_oss_integrations::capabilities_adapter::create_provider().unwrap();
+    let provider = cleanflow_oss_integrations::capabilities_adapter::create_provider().unwrap();
     
     let token = create_test_token(vec![
         Capability::AllowChat,
@@ -55,7 +55,7 @@ fn allow_chat_permits_read_denies_write() {
 /// Test: ALLOW_PLAN_WRITE → revise OK, home/member claims validated
 #[test]
 fn allow_plan_write_permits_revise() {
-    let provider = clara_oss_integrations::capabilities_adapter::create_provider().unwrap();
+    let provider = cleanflow_oss_integrations::capabilities_adapter::create_provider().unwrap();
     
     let token = create_test_token(vec![
         Capability::AllowChat,
@@ -82,7 +82,7 @@ fn allow_plan_write_permits_revise() {
 /// Test: DENY_TOOLS → all tool calls rejected with POLICY_BLOCK code
 #[test]
 fn deny_tools_rejects_all_tools() {
-    let provider = clara_oss_integrations::capabilities_adapter::create_provider().unwrap();
+    let provider = cleanflow_oss_integrations::capabilities_adapter::create_provider().unwrap();
     
     let token = create_test_token(vec![
         Capability::DenyTools,
@@ -120,7 +120,7 @@ fn deny_tools_rejects_all_tools() {
 /// Test: Guardrail Action → Capability mapping
 #[test]
 fn guardrail_action_maps_to_capabilities() {
-    let provider = clara_oss_integrations::capabilities_adapter::create_provider().unwrap();
+    let provider = cleanflow_oss_integrations::capabilities_adapter::create_provider().unwrap();
     
     // Test ALLOW action
     let token_allow = provider.create_token("turn_1", &Action::Allow).unwrap();
@@ -155,7 +155,7 @@ fn guardrail_action_maps_to_capabilities() {
 /// Test: Expired tokens are rejected
 #[test]
 fn expired_tokens_are_rejected() {
-    let provider = clara_oss_integrations::capabilities_adapter::create_provider().unwrap();
+    let provider = cleanflow_oss_integrations::capabilities_adapter::create_provider().unwrap();
     
     let mut token = create_test_token(vec![Capability::AllowPlanWrite]);
     token.expires_at = Utc::now().timestamp() - 1; // Expired

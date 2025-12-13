@@ -1,7 +1,7 @@
 //! Family member assignment tool with real implementation
 
 use crate::{ToolError, ToolResult};
-use clara_store::Store;
+use cleanflow_store::Store;
 use serde::Deserialize;
 use serde_json::json;
 
@@ -84,7 +84,7 @@ async fn validate_member_belongs_to_home(
     // For now, we'll implement a basic check that always returns true
     // In production, you would:
     // 1. Add a members table migration
-    // 2. Add a MemberRepo trait to clara-store
+    // 2. Add a MemberRepo trait to cleanflow-store
     // 3. Query the database here
     
     tracing::debug!(
@@ -111,7 +111,7 @@ async fn update_task_assignment(
     // For now, we'll implement a basic update
     // In production, you would:
     // 1. Add a tasks table migration
-    // 2. Add a TaskRepo trait to clara-store
+    // 2. Add a TaskRepo trait to cleanflow-store
     // 3. Update the database here
     
     tracing::info!(
@@ -132,7 +132,7 @@ async fn update_task_assignment(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use clara_store::Store;
+    use cleanflow_store::Store;
     use serde_json::json;
 
     #[tokio::test]

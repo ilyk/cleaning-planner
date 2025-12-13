@@ -43,71 +43,71 @@ impl Metrics {
     /// Create and register all metrics
     pub fn new() -> anyhow::Result<Arc<Self>> {
         let ws_connections = register_int_gauge!(
-            "clara_ws_connections",
+            "cleanflow_ws_connections",
             "Number of active WebSocket connections"
         )?;
         REGISTRY.register(Box::new(ws_connections.clone()))?;
 
         let turns_started = register_int_counter!(
-            "clara_turns_started_total",
+            "cleanflow_turns_started_total",
             "Total number of turns started"
         )?;
         REGISTRY.register(Box::new(turns_started.clone()))?;
 
         let turns_finished = register_int_counter!(
-            "clara_turns_finished_total",
+            "cleanflow_turns_finished_total",
             "Total number of turns finished"
         )?;
         REGISTRY.register(Box::new(turns_finished.clone()))?;
 
         let guardrail_hits = register_int_counter_vec!(
-            "clara_guardrail_hits_total",
+            "cleanflow_guardrail_hits_total",
             "Total number of guardrail hits by category",
             &["category"]
         )?;
         REGISTRY.register(Box::new(guardrail_hits.clone()))?;
 
         let tokens_in = register_int_counter!(
-            "clara_tokens_in_total",
+            "cleanflow_tokens_in_total",
             "Total input tokens processed"
         )?;
         REGISTRY.register(Box::new(tokens_in.clone()))?;
 
         let tokens_out = register_int_counter!(
-            "clara_tokens_out_total",
+            "cleanflow_tokens_out_total",
             "Total output tokens generated"
         )?;
         REGISTRY.register(Box::new(tokens_out.clone()))?;
 
         let ttft_ms = register_histogram!(
-            "clara_ttft_ms",
+            "cleanflow_ttft_ms",
             "Time to first token in milliseconds",
             vec![50.0, 100.0, 200.0, 350.0, 500.0, 800.0, 1000.0, 2000.0]
         )?;
         REGISTRY.register(Box::new(ttft_ms.clone()))?;
 
         let barge_in_stop_ms = register_histogram!(
-            "clara_barge_in_stop_ms",
+            "cleanflow_barge_in_stop_ms",
             "Barge-in stop latency in milliseconds",
             vec![10.0, 25.0, 50.0, 75.0, 100.0, 150.0, 200.0]
         )?;
         REGISTRY.register(Box::new(barge_in_stop_ms.clone()))?;
 
         let errors_total = register_int_counter_vec!(
-            "clara_errors_total",
+            "cleanflow_errors_total",
             "Total errors by code",
             &["code"]
         )?;
         REGISTRY.register(Box::new(errors_total.clone()))?;
 
         let audio_bytes_in = register_int_counter!(
-            "clara_audio_bytes_in_total",
+            "cleanflow_audio_bytes_in_total",
             "Total audio bytes received"
         )?;
         REGISTRY.register(Box::new(audio_bytes_in.clone()))?;
 
         let audio_bytes_out = register_int_counter!(
-            "clara_audio_bytes_out_total",
+            "cleanflow_audio_bytes_out_total",
             "Total audio bytes sent"
         )?;
         REGISTRY.register(Box::new(audio_bytes_out.clone()))?;

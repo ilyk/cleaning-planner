@@ -75,7 +75,7 @@ object NetworkModule {
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
-        baseUrl: String
+        @javax.inject.Named("baseUrl") baseUrl: String
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -86,8 +86,10 @@ object NetworkModule {
     
     @Provides
     @Singleton
+    @javax.inject.Named("baseUrl")
     fun provideBaseUrl(): String {
-        return "http://localhost:8080" // Clara backend server
+        // 10.0.2.2 is the Android emulator alias for host machine's localhost
+        return "http://10.0.2.2:8090" // Clara backend server
     }
     
     @Provides
@@ -124,7 +126,7 @@ object NetworkModule {
     @Singleton
     fun provideClaraWebSocketClient(
         okHttpClient: OkHttpClient,
-        baseUrl: String
+        @javax.inject.Named("baseUrl") baseUrl: String
     ): ClaraWebSocketClient {
         return ClaraWebSocketClient(okHttpClient, baseUrl)
     }

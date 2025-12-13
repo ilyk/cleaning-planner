@@ -91,7 +91,7 @@ pub struct PolicyEngine {
     downgrade_threshold: f32,
     mask_threshold: f32,
     #[cfg(feature = "use-llm-security")]
-    llm_security: Option<Box<dyn clara_oss_integrations::llm_security_adapter::LlmSecurityProvider>>,
+    llm_security: Option<Box<dyn cleanflow_oss_integrations::llm_security_adapter::LlmSecurityProvider>>,
 }
 
 impl PolicyEngine {
@@ -270,7 +270,7 @@ impl PolicyEngine {
     }
 
     #[cfg(feature = "use-llm-security")]
-    pub fn with_llm_security(mut self, provider: Box<dyn clara_oss_integrations::llm_security_adapter::LlmSecurityProvider>) -> Self {
+    pub fn with_llm_security(mut self, provider: Box<dyn cleanflow_oss_integrations::llm_security_adapter::LlmSecurityProvider>) -> Self {
         self.llm_security = Some(provider);
         self
     }

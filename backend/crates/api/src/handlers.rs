@@ -7,9 +7,9 @@ use axum::{
     response::{IntoResponse, Response},
     Extension, Json,
 };
-use clara_auth::AuthExtension;
-use clara_protocol;
-use clara_telemetry::Metrics;
+use cleanflow_auth::AuthExtension;
+use cleanflow_protocol;
+use cleanflow_telemetry::Metrics;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tracing;
@@ -19,7 +19,7 @@ use uuid::Uuid;
 pub async fn health_check() -> impl IntoResponse {
     Json(serde_json::json!({
         "status": "ok",
-        "service": "clara-stream-server",
+        "service": "cleanflow-server",
         "version": "2025.10.29"
     }))
 }
@@ -59,7 +59,7 @@ pub async fn health_details_check(
 
     Json(serde_json::json!({
         "status": "ok",
-        "service": "clara-stream-server",
+        "service": "cleanflow-server",
         "version": "2025.10.29",
         "features": features,
         "policy_version": state.config.versions.guardrail_policy_version,
@@ -142,8 +142,8 @@ pub async fn start_turn(
         .start_turn(&req.session_id)
         .await
         .map_err(|e| match e {
-            clara_session::SessionError::RateLimited(msg) => crate::errors::CleanFlowError::RateLimited(msg),
-            clara_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
+            cleanflow_session::SessionError::RateLimited(msg) => crate::errors::CleanFlowError::RateLimited(msg),
+            cleanflow_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
             _ => crate::errors::CleanFlowError::Internal(e.to_string()),
         })?;
 
@@ -181,8 +181,8 @@ pub async fn websocket_handler(
         .validate_session(&session_id)
         .await
         .map_err(|e| match e {
-            clara_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
-            clara_session::SessionError::SessionAlreadyConnected(msg) => crate::errors::CleanFlowError::SessionAlreadyConnected(msg),
+            cleanflow_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
+            cleanflow_session::SessionError::SessionAlreadyConnected(msg) => crate::errors::CleanFlowError::SessionAlreadyConnected(msg),
             _ => crate::errors::CleanFlowError::Internal(e.to_string()),
         })?;
 
@@ -196,8 +196,8 @@ pub async fn websocket_handler(
                 .start_turn(&session_id)
                 .await
                 .map_err(|e| match e {
-                    clara_session::SessionError::RateLimited(msg) => crate::errors::CleanFlowError::RateLimited(msg),
-                    clara_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
+                    cleanflow_session::SessionError::RateLimited(msg) => crate::errors::CleanFlowError::RateLimited(msg),
+                    cleanflow_session::SessionError::SessionNotFound(msg) => crate::errors::CleanFlowError::SessionNotFound(msg),
                     _ => crate::errors::CleanFlowError::Internal(e.to_string()),
                 })?
         }
@@ -219,7 +219,7 @@ pub async fn websocket_handler(
 
     // Use on_upgrade to handle the WebSocket connection
     Ok(ws.on_upgrade(move |socket| async move {
-        clara_stream::handle_websocket(
+        cleanflow_stream::handle_websocket(
             socket,
             session_id,
             turn_id,

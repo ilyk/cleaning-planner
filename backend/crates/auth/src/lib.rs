@@ -9,7 +9,7 @@ pub mod middleware;
 pub use claims::{Claims, ClaimsError};
 pub use middleware::AuthExtension;
 
-use clara_protocol::ProtocolError;
+use cleanflow_protocol::ProtocolError;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use std::sync::Arc;
 

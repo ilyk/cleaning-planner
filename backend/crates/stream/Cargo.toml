@@ -1,19 +1,19 @@
 [package]
-name = "clara-stream"
+name = "cleanflow-stream"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
-clara-config = { path = "../config" }
-clara-session = { path = "../session" }
-clara-guardrails = { path = "../guardrails" }
-clara-llm = { path = "../llm" }
-clara-tools = { path = "../tools" }
-clara-telemetry = { path = "../telemetry" }
-clara-store = { path = "../store" }
+cleanflow-protocol = { path = "../protocol" }
+cleanflow-config = { path = "../config" }
+cleanflow-session = { path = "../session" }
+cleanflow-guardrails = { path = "../guardrails" }
+cleanflow-llm = { path = "../llm" }
+cleanflow-tools = { path = "../tools" }
+cleanflow-telemetry = { path = "../telemetry" }
+cleanflow-store = { path = "../store" }
 
 axum = { workspace = true }
 tokio = { workspace = true }

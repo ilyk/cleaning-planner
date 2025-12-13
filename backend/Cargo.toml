@@ -14,13 +14,13 @@ members = [
     "crates/config",
     "crates/domain",
     "crates/oss-integrations",
-    "bin/clara-stream-server",
+    "bin/cleanflow-server",
 ]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["CleanFlow / Clara Backend Team"]
+authors = ["CleanFlow Backend Team"]
 license = "MIT"
 
 [workspace.dependencies]

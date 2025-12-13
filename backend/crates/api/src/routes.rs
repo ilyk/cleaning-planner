@@ -1,12 +1,12 @@
 //! Router configuration
 
-use crate::{handlers, plans, lookup, cleanflow, cleanflow_history, idempotency, state::AppState};
+use crate::{handlers, plans, lookup, cleanflow, cleanflow_history, onboarding, idempotency, state::AppState};
 use axum::{
     middleware,
     routing::{get, post},
     Router,
 };
-use clara_auth;
+use cleanflow_auth;
 use tower_http::{
     cors::{Any, CorsLayer},
     trace::TraceLayer,
@@ -46,20 +46,26 @@ pub fn create_router(state: AppState) -> Router {
         .route("/v1/cleanflow/history/summary", get(cleanflow_history::get_history_summary));
 
     // Clara Voice API routes (require auth)
-    let clara_routes = Router::new()
+    let cleanflow_clara_routes = Router::new()
         .route("/v1/clara/session", post(handlers::create_session))
         .route("/v1/clara/session/turn", post(handlers::start_turn))
         .route("/v1/clara/stream", get(handlers::websocket_handler))
         .route("/v1/clara/cancel", post(handlers::cancel_turn));
 
+    // Onboarding API routes (require auth)
+    let onboarding_routes = Router::new()
+        .route("/v1/onboarding/extract", post(onboarding::extract_from_conversation))
+        .route("/v1/onboarding/setup", post(onboarding::manual_home_setup));
+
     // All protected routes
     let protected_routes = Router::new()
         .merge(plan_routes)
         .merge(lookup_routes)
-        .merge(clara_routes)
+        .merge(cleanflow_clara_routes)
+        .merge(onboarding_routes)
         .route_layer(middleware::from_fn_with_state(
             state.jwt_validator.clone(),
-            clara_auth::middleware::auth_middleware,
+            cleanflow_auth::middleware::auth_middleware,
         ));
 
     // Combine routes

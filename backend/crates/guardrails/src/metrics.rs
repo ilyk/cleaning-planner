@@ -34,7 +34,7 @@ impl GuardrailMetrics {
     pub fn new(registry: &Registry) -> Result<Self, prometheus::Error> {
         let ttft_ms = Histogram::with_opts(
             HistogramOpts::new(
-                "clara_guardrail_ttft_ms",
+                "cleanflow_guardrail_ttft_ms",
                 "Time to first token (guardrail processing overhead) in milliseconds",
             )
             .buckets(vec![10.0, 25.0, 50.0, 80.0, 100.0, 200.0, 500.0])
@@ -42,58 +42,58 @@ impl GuardrailMetrics {
 
         let quarantine_dwell_ms = Histogram::with_opts(
             HistogramOpts::new(
-                "clara_guardrail_quarantine_dwell_ms",
+                "cleanflow_guardrail_quarantine_dwell_ms",
                 "Quarantine buffer dwell time in milliseconds",
             )
             .buckets(vec![100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0])
         )?;
-        
+
         let r2_count = Counter::with_opts(
             prometheus::Opts::new(
                 "guardrail_r2_count",
                 "Total R2 risk class detections",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
-        
+
         let r3_count = Counter::with_opts(
             prometheus::Opts::new(
                 "guardrail_r3_count",
                 "Total R3 risk class detections",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
-        
+
         let mask_ranges = Counter::with_opts(
             prometheus::Opts::new(
                 "guardrail_mask_ranges",
                 "Total mask ranges applied",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
-        
+
         let interrupts = IntCounter::with_opts(
             prometheus::Opts::new(
                 "guardrail_interrupts",
                 "Total interrupts triggered",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
-        
+
         let tool_denies = IntCounter::with_opts(
             prometheus::Opts::new(
                 "guardrail_tool_denies",
                 "Total tool denials",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
-        
+
         let frames_processed = Counter::with_opts(
             prometheus::Opts::new(
                 "guardrail_frames_processed",
                 "Total audio frames processed",
             )
-            .namespace("clara")
+            .namespace("cleanflow")
         )?;
         
         registry.register(Box::new(ttft_ms.clone()))?;

@@ -1,19 +1,19 @@
 [package]
-name = "clara-api"
+name = "cleanflow-api"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
-clara-config = { path = "../config" }
-clara-auth = { path = "../auth" }
-clara-session = { path = "../session" }
-clara-stream = { path = "../stream" }
-clara-store = { path = "../store" }
-clara-telemetry = { path = "../telemetry" }
-clara-domain = { path = "../domain" }
+cleanflow-protocol = { path = "../protocol" }
+cleanflow-config = { path = "../config" }
+cleanflow-auth = { path = "../auth" }
+cleanflow-session = { path = "../session" }
+cleanflow-stream = { path = "../stream" }
+cleanflow-store = { path = "../store" }
+cleanflow-telemetry = { path = "../telemetry" }
+cleanflow-domain = { path = "../domain" }
 
 axum = { workspace = true }
 tower = { workspace = true }

@@ -1,7 +1,7 @@
 //! Plan generation and revision tools
 
 use crate::{ToolError, ToolResult};
-use clara_store::Store;
+use cleanflow_store::Store;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -37,7 +37,7 @@ pub async fn generate(
         "title": args.title,
         "description": args.description.unwrap_or_default(),
         "tasks": [],
-        "created_by": "clara",
+        "created_by": "cleanflow",
         "status": "active"
     });
 

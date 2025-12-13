@@ -39,6 +39,7 @@ include(":feature:kidmode")
 include(":feature:board")
 include(":feature:printables")
 include(":feature:settings")
+include(":feature:setup")
 
 // Testing
 include(":testing:core")

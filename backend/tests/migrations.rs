@@ -20,7 +20,7 @@ async fn test_migrations_apply_and_rollback() {
     let tables = vec![
         "homes", "members", "rooms", "task_templates", "plans", 
         "plan_tasks", "assignments", "telemetry_events", 
-        "printable_exports", "clara_sessions", "clara_turns", "idempotency_keys"
+        "printable_exports", "cleanflow_sessions", "cleanflow_turns", "idempotency_keys"
     ];
     
     for table in tables {
@@ -86,8 +86,8 @@ async fn test_foreign_key_constraints(pool: &PgPool) {
         ("assignments", "member_id", "members", "id"),
         ("telemetry_events", "task_id", "plan_tasks", "id"),
         ("printable_exports", "plan_id", "plans", "id"),
-        ("clara_sessions", "home_id", "homes", "id"),
-        ("clara_turns", "session_id", "clara_sessions", "id"),
+        ("cleanflow_sessions", "home_id", "homes", "id"),
+        ("cleanflow_turns", "session_id", "cleanflow_sessions", "id"),
     ];
     
     for (table, column, ref_table, ref_column) in foreign_keys {
@@ -115,8 +115,8 @@ async fn test_check_constraints(pool: &PgPool) {
         ("assignments", "id", "a_%"),
         ("telemetry_events", "id", "te_%"),
         ("printable_exports", "id", "x_%"),
-        ("clara_sessions", "id", "cs_%"),
-        ("clara_turns", "id", "ct_%"),
+        ("cleanflow_sessions", "id", "cs_%"),
+        ("cleanflow_turns", "id", "ct_%"),
     ];
     
     for (table, column, pattern) in id_constraints {
@@ -144,10 +144,10 @@ async fn test_indexes(pool: &PgPool) {
         ("idx_telemetry_events_task_created", "telemetry_events"),
         ("idx_telemetry_events_created_at", "telemetry_events"),
         ("idx_printable_exports_plan_id", "printable_exports"),
-        ("idx_clara_sessions_user_id", "clara_sessions"),
-        ("idx_clara_sessions_home_id", "clara_sessions"),
-        ("idx_clara_turns_session_id", "clara_turns"),
-        ("idx_clara_turns_started_at", "clara_turns"),
+        ("idx_cleanflow_sessions_user_id", "cleanflow_sessions"),
+        ("idx_cleanflow_sessions_home_id", "cleanflow_sessions"),
+        ("idx_cleanflow_turns_session_id", "cleanflow_turns"),
+        ("idx_cleanflow_turns_started_at", "cleanflow_turns"),
         ("idx_idempotency_expires_at", "idempotency_keys"),
     ];
     

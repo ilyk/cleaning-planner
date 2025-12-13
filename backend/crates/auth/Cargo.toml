@@ -1,12 +1,12 @@
 [package]
-name = "clara-auth"
+name = "cleanflow-auth"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
+cleanflow-protocol = { path = "../protocol" }
 axum = { workspace = true }
 jsonwebtoken = { workspace = true }
 serde = { workspace = true }

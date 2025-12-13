@@ -5,7 +5,7 @@ use axum::{
     response::{IntoResponse, Response},
     Json,
 };
-use clara_domain::models::{ApiError, ErrorCode, ErrorDetails};
+use cleanflow_domain::models::{ApiError, ErrorCode, ErrorDetails};
 use serde_json::json;
 use tracing::error;
 use uuid::Uuid;

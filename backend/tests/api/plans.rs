@@ -4,7 +4,7 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use clara_domain::{
+use cleanflow_domain::{
     models::*,
     services::{PlanService, PrintableService, IdempotencyService},
 };

@@ -530,7 +530,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-api"
+name = "cleanflow-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -538,14 +538,14 @@ dependencies = [
  "axum",
  "base64 0.22.1",
  "chrono",
- "clara-auth",
- "clara-config",
- "clara-domain",
- "clara-protocol",
- "clara-session",
- "clara-store",
- "clara-stream",
- "clara-telemetry",
+ "cleanflow-auth",
+ "cleanflow-config",
+ "cleanflow-domain",
+ "cleanflow-protocol",
+ "cleanflow-session",
+ "cleanflow-store",
+ "cleanflow-stream",
+ "cleanflow-telemetry",
  "serde",
  "serde_json",
  "sqlx",
@@ -558,13 +558,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-auth"
+name = "cleanflow-auth"
 version = "0.1.0"
 dependencies = [
  "axum",
  "bytes",
  "chrono",
- "clara-protocol",
+ "cleanflow-protocol",
  "jsonwebtoken",
  "serde",
  "serde_json",
@@ -575,7 +575,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-config"
+name = "cleanflow-config"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -586,13 +586,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-domain"
+name = "cleanflow-domain"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "chrono",
- "clara-store",
+ "cleanflow-store",
  "regex",
  "reqwest 0.11.27",
  "serde",
@@ -604,7 +604,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-guardrails"
+name = "cleanflow-guardrails"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -612,9 +612,9 @@ dependencies = [
  "base64 0.22.1",
  "bytes",
  "chrono",
- "clara-config",
- "clara-oss-integrations",
- "clara-protocol",
+ "cleanflow-config",
+ "cleanflow-oss-integrations",
+ "cleanflow-protocol",
  "once_cell",
  "prometheus",
  "regex",
@@ -629,14 +629,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-llm"
+name = "cleanflow-llm"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
  "bytes",
- "clara-config",
- "clara-protocol",
+ "cleanflow-config",
+ "cleanflow-protocol",
  "dotenvy",
  "futures",
  "reqwest 0.12.24",
@@ -651,13 +651,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-oss-integrations"
+name = "cleanflow-oss-integrations"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
  "chrono",
- "clara-protocol",
+ "cleanflow-protocol",
  "llm-security",
  "serde",
  "serde_json",
@@ -668,7 +668,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-protocol"
+name = "cleanflow-protocol"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
@@ -681,13 +681,30 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-session"
+name = "cleanflow-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "cleanflow-api",
+ "cleanflow-auth",
+ "cleanflow-config",
+ "cleanflow-session",
+ "cleanflow-store",
+ "cleanflow-telemetry",
+ "dotenvy",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "cleanflow-session"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
- "clara-protocol",
- "clara-store",
+ "cleanflow-protocol",
+ "cleanflow-store",
  "thiserror 1.0.69",
  "tokio",
  "tracing",
@@ -695,7 +712,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-store"
+name = "cleanflow-store"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -712,7 +729,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-stream"
+name = "cleanflow-stream"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -720,14 +737,14 @@ dependencies = [
  "base64 0.22.1",
  "bytes",
  "chrono",
- "clara-config",
- "clara-guardrails",
- "clara-llm",
- "clara-protocol",
- "clara-session",
- "clara-store",
- "clara-telemetry",
- "clara-tools",
+ "cleanflow-config",
+ "cleanflow-guardrails",
+ "cleanflow-llm",
+ "cleanflow-protocol",
+ "cleanflow-session",
+ "cleanflow-store",
+ "cleanflow-telemetry",
+ "cleanflow-tools",
  "futures",
  "serde",
  "serde_json",
@@ -738,24 +755,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-stream-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "clara-api",
- "clara-auth",
- "clara-config",
- "clara-session",
- "clara-store",
- "clara-telemetry",
- "dotenvy",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "clara-telemetry"
+name = "cleanflow-telemetry"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -766,15 +766,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "clara-tools"
+name = "cleanflow-tools"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
- "clara-guardrails",
- "clara-oss-integrations",
- "clara-protocol",
- "clara-store",
+ "cleanflow-guardrails",
+ "cleanflow-oss-integrations",
+ "cleanflow-protocol",
+ "cleanflow-store",
  "printpdf",
  "serde",
  "serde_json",

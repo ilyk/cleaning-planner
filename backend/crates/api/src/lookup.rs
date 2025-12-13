@@ -5,9 +5,9 @@ use axum::{
     response::Json,
     Extension,
 };
-use clara_auth::AuthExtension;
-use clara_domain::models::*;
-use clara_domain::services::HomeProfile;
+use cleanflow_auth::AuthExtension;
+use cleanflow_domain::models::*;
+use cleanflow_domain::services::HomeProfile;
 use serde::Deserialize;
 use std::sync::Arc;
 use tracing::info;
@@ -66,7 +66,7 @@ pub struct TaskTemplatesQuery {
     pub home_id: String,
 }
 
-// Using HomeProfile from clara_domain::services
+// Using HomeProfile from cleanflow_domain::services
 
 /// Service traits for lookup operations
 #[async_trait::async_trait]

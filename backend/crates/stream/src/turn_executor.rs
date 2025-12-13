@@ -1,12 +1,12 @@
 //! Turn executor - orchestrates guardrails, LLM, and tools
 
 use base64::Engine;
-use clara_guardrails::{Action, Verdict};
-use clara_llm::{LlmEvent, LlmRealtime};
-use clara_protocol::{AudioFormat, OutboundMessage};
-use clara_store::Store;
-use clara_telemetry::Metrics;
-use clara_tools::{CapabilityMask, ToolExecutor};
+use cleanflow_guardrails::{Action, Verdict};
+use cleanflow_llm::{LlmEvent, LlmRealtime};
+use cleanflow_protocol::{AudioFormat, OutboundMessage};
+use cleanflow_store::Store;
+use cleanflow_telemetry::Metrics;
+use cleanflow_tools::{CapabilityMask, ToolExecutor};
 use std::sync::Arc;
 use std::time::Instant;
 use tokio::sync::mpsc;
@@ -220,8 +220,8 @@ impl TurnExecutor {
 
                         let msg = OutboundMessage::TurnFinish {
                             turn_id: turn_id.clone(),
-                            metadata: clara_protocol::TurnFinishMetadata {
-                                usage: clara_protocol::UsageMetadata {
+                            metadata: cleanflow_protocol::TurnFinishMetadata {
+                                usage: cleanflow_protocol::UsageMetadata {
                                     tokens_in: usage_in,
                                     tokens_out: usage_out,
                                     audio_in_seconds: 0.0, // TODO: Track

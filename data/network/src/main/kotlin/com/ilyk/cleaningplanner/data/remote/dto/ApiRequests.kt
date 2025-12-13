@@ -158,3 +158,78 @@ data class AudioOutputMessage(
     val timestamp: Long,
     val turnId: String
 )
+
+// ==================== Onboarding Extraction DTOs ====================
+
+/**
+ * Request to extract structured home data from Clara onboarding conversation
+ */
+@Serializable
+data class ExtractFromConversationRequest(
+    val sessionId: String,
+    val conversationTranscript: List<ConversationMessage>
+)
+
+@Serializable
+data class ConversationMessage(
+    val role: String, // "user" or "assistant"
+    val content: String
+)
+
+/**
+ * Response from extraction endpoint with extracted home data
+ */
+@Serializable
+data class ExtractFromConversationResponse(
+    val homeId: String,
+    val success: Boolean,
+    val extractedData: ExtractedHomeData? = null,
+    val roomCount: Int = 0,
+    val memberCount: Int = 0
+)
+
+@Serializable
+data class ExtractedHomeData(
+    val homeName: String,
+    val rooms: List<ExtractedRoom> = emptyList(),
+    val members: List<ExtractedMember> = emptyList(),
+    val pets: List<ExtractedPet> = emptyList(),
+    val preferences: ExtractedPreferences? = null,
+    val problemAreas: List<ExtractedProblemArea> = emptyList()
+)
+
+@Serializable
+data class ExtractedRoom(
+    val name: String,
+    val kind: String, // kitchen, bathroom, bedroom, living, other
+    val notes: String? = null
+)
+
+@Serializable
+data class ExtractedMember(
+    val name: String,
+    val role: String, // adult, kid, teen, guest
+    val notes: String? = null
+)
+
+@Serializable
+data class ExtractedPet(
+    val name: String,
+    val type: String, // dog, cat, bird, fish, other
+    val sheddingLevel: Int? = null, // 0-3
+    val frequentRooms: List<String>? = null
+)
+
+@Serializable
+data class ExtractedPreferences(
+    val preferredCleaningTimes: List<String>? = null, // morning, afternoon, evening
+    val quietHours: String? = null,
+    val busyDays: List<String>? = null,
+    val cleaningStyle: String? = null // thorough, quick, balanced
+)
+
+@Serializable
+data class ExtractedProblemArea(
+    val room: String,
+    val issue: String
+)

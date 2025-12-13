@@ -1,15 +1,15 @@
 [package]
-name = "clara-tools"
+name = "cleanflow-tools"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
-clara-store = { path = "../store" }
-clara-guardrails = { path = "../guardrails" }
-clara-oss-integrations = { path = "../oss-integrations", features = ["use-path-security"], optional = true }
+cleanflow-protocol = { path = "../protocol" }
+cleanflow-store = { path = "../store" }
+cleanflow-guardrails = { path = "../guardrails" }
+cleanflow-oss-integrations = { path = "../oss-integrations", features = ["use-path-security"], optional = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 serde = { workspace = true }
@@ -22,7 +22,7 @@ chrono = { workspace = true }
 [features]
 default = []
 use-pdf = ["dep:printpdf"]
-use-path-security = ["dep:clara-oss-integrations"]
+use-path-security = ["dep:cleanflow-oss-integrations"]
 
 [dev-dependencies]
 

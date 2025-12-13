@@ -1,6 +1,6 @@
 //! Message validation
 
-use clara_protocol::ProtocolError;
+use cleanflow_protocol::ProtocolError;
 use anyhow::Result;
 
 /// Sequence validator

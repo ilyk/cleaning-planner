@@ -156,8 +156,8 @@ mod tests {
     async fn test_protocol_version_header() {
         // Test that Accept-Protocol header is validated
         
-        let protocol_version = "clara/0.1";
-        assert_eq!(protocol_version, "clara/0.1");
+        let protocol_version = "cleanflow/0.1";
+        assert_eq!(protocol_version, "cleanflow/0.1");
         
         // Incompatible versions should be rejected
     }

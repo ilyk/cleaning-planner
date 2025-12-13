@@ -1,7 +1,7 @@
 //! Telemetry recording tool
 
 use crate::{ToolError, ToolResult};
-use clara_store::Store;
+use cleanflow_store::Store;
 use serde::Deserialize;
 use serde_json::json;
 

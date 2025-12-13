@@ -1,8 +1,8 @@
 //! Session and turn lifecycle management
 
 use anyhow::Result;
-use clara_protocol::ProtocolError;
-use clara_store::{SessionRepo, SessionState};
+use cleanflow_protocol::ProtocolError;
+use cleanflow_store::{SessionRepo, SessionState};
 use std::sync::Arc;
 use std::time::Duration;
 use thiserror::Error;
@@ -166,7 +166,7 @@ impl From<SessionError> for ProtocolError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use clara_store::Store;
+    use cleanflow_store::Store;
 
     #[tokio::test]
     async fn test_create_session() {

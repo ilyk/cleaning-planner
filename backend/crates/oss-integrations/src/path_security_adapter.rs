@@ -48,9 +48,9 @@ impl MockPathSecurityProvider {
     pub fn new() -> Self {
         Self {
             allowed_prefixes: vec![
-                PathBuf::from("/tmp/clara/printables"),
-                PathBuf::from("/tmp/clara/qr"),
-                PathBuf::from("/var/clara/output"),
+                PathBuf::from("/tmp/cleanflow/printables"),
+                PathBuf::from("/tmp/cleanflow/qr"),
+                PathBuf::from("/var/cleanflow/output"),
             ],
         }
     }
@@ -204,9 +204,9 @@ pub fn create_provider() -> Result<Box<dyn PathSecurityProvider>, anyhow::Error>
     {
         tracing::info!("Using real path-security provider");
         let allowed_prefixes = vec![
-            PathBuf::from("/tmp/clara/printables"),
-            PathBuf::from("/tmp/clara/qr"),
-            PathBuf::from("/var/clara/output"),
+            PathBuf::from("/tmp/cleanflow/printables"),
+            PathBuf::from("/tmp/cleanflow/qr"),
+            PathBuf::from("/var/cleanflow/output"),
         ];
         Ok(Box::new(RealPathSecurityProvider::new(allowed_prefixes)?))
     }

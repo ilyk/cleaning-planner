@@ -3,11 +3,11 @@ version: "3.9"
 services:
   pg:
     image: postgres:16
-    container_name: clara-postgres
+    container_name: cleanflow-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: clara
+      POSTGRES_DB: cleanflow
     # Use alternate port to avoid conflicts with local postgres
     ports:
       - "15432:5432"
@@ -21,7 +21,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: clara-redis
+    container_name: cleanflow-redis
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes

@@ -91,6 +91,7 @@ data class ClaraTextChatUiState(
  */
 data class OnboardingResult(
     val sessionId: String,
+    val homeId: String = "", // ID of the created/updated home in backend
     val rooms: List<String> = emptyList(),
     val peopleCount: Int = 0,
     val hasPets: Boolean = false,

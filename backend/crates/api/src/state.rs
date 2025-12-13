@@ -1,16 +1,17 @@
 //! Shared application state
 
-use clara_auth::JwtValidator;
-use clara_config::AppConfig;
-use clara_domain::services::{
-	PlanService, PrintableService, IdempotencyService, TelemetryService, 
+use cleanflow_auth::JwtValidator;
+use cleanflow_config::AppConfig;
+use cleanflow_domain::services::{
+	PlanService, PrintableService, IdempotencyService, TelemetryService,
 	IdempotencyStore, RealPlanService, RealPrintableService, RealLookupService,
 	DbIdempotencyStore, DbPlanService, CleanFlowOptimizer, DbCleanFlowOptimizer,
-	CleanFlowSuggestionService, LlmSuggestionService
+	CleanFlowSuggestionService, LlmSuggestionService,
+	HomeExtractionService, LlmHomeExtractionService,
 };
-use clara_session::SessionManager;
-use clara_store::{Store, DbPool};
-use clara_telemetry::Metrics;
+use cleanflow_session::SessionManager;
+use cleanflow_store::{Store, DbPool};
+use cleanflow_telemetry::Metrics;
 use std::sync::Arc;
 
 /// Application state shared across handlers
@@ -32,6 +33,7 @@ pub struct AppState {
 	pub real_lookup_service: Arc<dyn RealLookupService>,
 	pub cleanflow_optimizer: Arc<dyn CleanFlowOptimizer>,
 	pub cleanflow_suggestion_service: Arc<dyn CleanFlowSuggestionService>,
+	pub home_extraction_service: Arc<dyn HomeExtractionService>,
 }
 
 impl AppState {
@@ -45,7 +47,7 @@ impl AppState {
         db_pool: DbPool,
         metrics: Arc<Metrics>,
     ) -> Self {
-        use clara_domain::services::{
+        use cleanflow_domain::services::{
             plan_service, printable_service, idempotency_service, telemetry_service,
             real_printable_service, real_lookup_service,
         };
@@ -56,9 +58,11 @@ impl AppState {
         let idempotency_service: Arc<dyn IdempotencyService> = Arc::new(idempotency_service::MockIdempotencyService::new());
         let telemetry_service: Arc<dyn TelemetryService> = Arc::new(telemetry_service::DbTelemetryService::new());
         let real_printable_service: Arc<dyn RealPrintableService> = Arc::new(real_printable_service::DbPrintableService::new());
-        let real_lookup_service: Arc<dyn RealLookupService> = Arc::new(real_lookup_service::DbLookupService::new());
+        let real_lookup_service: Arc<dyn RealLookupService> = Arc::new(real_lookup_service::DbLookupService::with_pool(db_pool.clone()));
         let idempotency_store = Arc::new(DbIdempotencyStore::new(db_pool.clone()));
-		let real_plan_service = Arc::new(DbPlanService::new(db_pool.clone()));
+		// Initialize plan service with Anthropic API key for LLM plan generation
+		let anthropic_api_key = config.llm.anthropic_api_key.clone();
+		let real_plan_service = Arc::new(DbPlanService::with_anthropic(db_pool.clone(), anthropic_api_key.clone()));
 		
 		// Initialize optimizer with optional LLM support
 		let openai_api_key = config.llm.openai_api_key.clone();
@@ -76,6 +80,11 @@ impl AppState {
 				openai_api_key,
 				model,
 			).with_db_pool(db_pool.clone()));
+
+		// Initialize home extraction service with Anthropic API key
+		let anthropic_api_key = config.llm.anthropic_api_key.clone();
+		let home_extraction_service: Arc<dyn HomeExtractionService> =
+			Arc::new(LlmHomeExtractionService::new(db_pool.clone(), anthropic_api_key));
         
         Self {
             config: Arc::new(config),
@@ -94,6 +103,7 @@ impl AppState {
             real_lookup_service,
             cleanflow_optimizer,
             cleanflow_suggestion_service,
+            home_extraction_service,
         }
     }
 }

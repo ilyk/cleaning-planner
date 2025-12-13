@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ilyk.cleaningplanner.data.remote.api.ClaraApi
+import com.ilyk.cleaningplanner.data.remote.dto.ConversationMessage
 import com.ilyk.cleaningplanner.data.remote.dto.CreateSessionRequest
+import com.ilyk.cleaningplanner.data.remote.dto.ExtractFromConversationRequest
 import com.ilyk.cleaningplanner.data.remote.dto.StartTurnRequest
 import com.ilyk.cleaningplanner.feature.clara.protocol.ClaraStreamClient
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -116,8 +118,8 @@ class ClaraTextChatViewModel @Inject constructor(
 
     private fun buildStreamUrl(sessionId: String): String {
         // Construct WebSocket URL from base URL
-        // TODO: Get base URL from config
-        return "ws://10.0.2.2:8080/v1/clara/stream?session=$sessionId"
+        // 10.0.2.2 is the Android emulator alias for host machine's localhost
+        return "ws://10.0.2.2:8090/v1/clara/stream?session=$sessionId"
     }
 
     private fun subscribeToServerMessages(client: ClaraStreamClient) {
@@ -287,17 +289,66 @@ class ClaraTextChatViewModel @Inject constructor(
     }
 
     /**
-     * Handle when onboarding is complete
+     * Handle when onboarding is complete.
+     * Calls the extraction API to persist home data from the conversation.
      */
     private suspend fun handleOnboardingComplete() {
-        _uiState.update { it.copy(onboardingComplete = true) }
+        _uiState.update { it.copy(onboardingComplete = true, isLoading = true) }
 
-        val result = OnboardingResult(
-            sessionId = _uiState.value.sessionId ?: "",
-            conversationTranscript = _uiState.value.messages
-        )
+        try {
+            val sessionId = _uiState.value.sessionId ?: ""
+            val messages = _uiState.value.messages
 
-        _events.emit(ChatEvent.OnboardingCompleted(result))
+            // Convert chat messages to API format
+            val conversationTranscript = messages.map { msg ->
+                ConversationMessage(
+                    role = when (msg.role) {
+                        MessageRole.USER -> "user"
+                        MessageRole.ASSISTANT -> "assistant"
+                    },
+                    content = msg.content
+                )
+            }
+
+            Log.i(TAG, "Extracting home data from ${messages.size} messages")
+
+            // Call extraction API to persist home data
+            val extractRequest = ExtractFromConversationRequest(
+                sessionId = sessionId,
+                conversationTranscript = conversationTranscript
+            )
+
+            val extractResponse = claraApi.extractFromConversation(extractRequest)
+
+            Log.i(TAG, "Extraction complete: homeId=${extractResponse.homeId}, rooms=${extractResponse.roomCount}, members=${extractResponse.memberCount}")
+
+            val result = OnboardingResult(
+                sessionId = sessionId,
+                homeId = extractResponse.homeId,
+                rooms = extractResponse.extractedData?.rooms?.map { it.name } ?: emptyList(),
+                peopleCount = extractResponse.extractedData?.members?.size ?: 0,
+                hasPets = (extractResponse.extractedData?.pets?.size ?: 0) > 0,
+                petTypes = extractResponse.extractedData?.pets?.map { it.type } ?: emptyList(),
+                preferredSchedule = extractResponse.extractedData?.preferences?.preferredCleaningTimes?.joinToString(", ") ?: "",
+                problemAreas = extractResponse.extractedData?.problemAreas?.map { "${it.room}: ${it.issue}" } ?: emptyList(),
+                cleaningStyle = extractResponse.extractedData?.preferences?.cleaningStyle ?: "",
+                conversationTranscript = messages
+            )
+
+            _uiState.update { it.copy(isLoading = false) }
+            _events.emit(ChatEvent.OnboardingCompleted(result))
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to extract home data", e)
+            _uiState.update { it.copy(isLoading = false, error = "Failed to save home setup: ${e.message}") }
+
+            // Still emit completion event with basic result
+            val result = OnboardingResult(
+                sessionId = _uiState.value.sessionId ?: "",
+                conversationTranscript = _uiState.value.messages
+            )
+            _events.emit(ChatEvent.OnboardingCompleted(result))
+        }
     }
 
     /**

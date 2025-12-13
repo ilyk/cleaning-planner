@@ -5,8 +5,8 @@ use axum::{
     response::Json,
     Extension,
 };
-use clara_auth::AuthExtension;
-use clara_domain::models::{TelemetryCompleteRequest, TelemetryCompleteResponse};
+use cleanflow_auth::AuthExtension;
+use cleanflow_domain::models::{TelemetryCompleteRequest, TelemetryCompleteResponse};
 use serde::Deserialize;
 use tracing::info;
 

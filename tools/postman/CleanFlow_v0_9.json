@@ -1,0 +1,434 @@
+{
+  "info": {
+    "name": "CleanFlow API v0.9",
+    "description": "CleanFlow API Reference & Data Model v0.9 Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "0.9.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "description": "Base URL for the API"
+    },
+    {
+      "key": "jwt_token",
+      "value": "your_jwt_token_here",
+      "description": "JWT token for authentication"
+    },
+    {
+      "key": "home_id",
+      "value": "h_test123",
+      "description": "Test home ID"
+    },
+    {
+      "key": "plan_id",
+      "value": "p_test123",
+      "description": "Test plan ID"
+    },
+    {
+      "key": "session_id",
+      "value": "cs_test123",
+      "description": "Test session ID"
+    },
+    {
+      "key": "turn_id",
+      "value": "ct_test123",
+      "description": "Test turn ID"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health & Metrics",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Health Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/details",
+              "host": ["{{base_url}}"],
+              "path": ["health", "details"]
+            }
+          }
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["metrics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plan APIs",
+      "item": [
+        {
+          "name": "Generate Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Version",
+                "value": "1.0.0"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$randomUUID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"home_id\": \"{{home_id}}\",\n  \"date\": \"2025-01-29\",\n  \"mode\": \"focus\",\n  \"constraints\": {\n    \"timebox_minutes\": 45,\n    \"rooms\": [\"r_kitchen\"],\n    \"include\": [\"wipe_counters\"],\n    \"exclude\": [\"deep_clean_oven\"]\n  },\n  \"client\": {\n    \"locale\": \"en-US\",\n    \"tz\": \"America/Los_Angeles\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/plan/generate",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Revise Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$randomUUID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": \"{{plan_id}}\",\n  \"edits\": [\n    {\n      \"op\": \"reorder\",\n      \"task_id\": \"t_8x1\",\n      \"after_task_id\": \"t_8x2\"\n    },\n    {\n      \"op\": \"postpone\",\n      \"task_id\": \"t_9p1\",\n      \"to_date\": \"2025-01-30\"\n    },\n    {\n      \"op\": \"assign\",\n      \"task_id\": \"t_8x1\",\n      \"member_id\": \"m_kid\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/plan/revise",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "revise"]
+            }
+          }
+        },
+        {
+          "name": "Get Plan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/plan/{{plan_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "{{plan_id}}"]
+            }
+          }
+        },
+        {
+          "name": "List Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/plans?home_id={{home_id}}&date_from=2025-01-01&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plans"],
+              "query": [
+                {
+                  "key": "home_id",
+                  "value": "{{home_id}}"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generate Printable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": \"{{plan_id}}\",\n  \"options\": {\n    \"paper_size\": \"A4\",\n    \"kids_friendly\": true,\n    \"qr_density\": \"per-task\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/plan/printable",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "printable"]
+            }
+          }
+        },
+        {
+          "name": "Assign Family",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": \"{{plan_id}}\",\n  \"assignments\": [\n    {\n      \"task_id\": \"t_8x1\",\n      \"member_id\": \"m_kid\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/family/assign",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "family", "assign"]
+            }
+          }
+        },
+        {
+          "name": "Record Telemetry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": \"t_8x1\",\n  \"status\": \"done\",\n  \"duration_sec\": 420,\n  \"comment\": \"Sticky stain took longer\",\n  \"source\": \"qr\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/telemetry/complete",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "telemetry", "complete"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clara Voice APIs",
+      "item": [
+        {
+          "name": "Create Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/clara/session",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "clara", "session"]
+            }
+          }
+        },
+        {
+          "name": "Start Turn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"{{session_id}}\",\n  \"user\": {\n    \"mode\": \"focus\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/clara/session/turn",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "clara", "session", "turn"]
+            }
+          }
+        },
+        {
+          "name": "WebSocket Stream",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/clara/stream?sessionId={{session_id}}&turnId={{turn_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "clara", "stream"],
+              "query": [
+                {
+                  "key": "sessionId",
+                  "value": "{{session_id}}"
+                },
+                {
+                  "key": "turnId",
+                  "value": "{{turn_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Turn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turn_id\": \"{{turn_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/clara/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "clara", "cancel"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lookup & Metadata APIs",
+      "item": [
+        {
+          "name": "Get Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/homes/{{home_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "homes", "{{home_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Task Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/task-templates?home_id={{home_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "task-templates"],
+              "query": [
+                {
+                  "key": "home_id",
+                  "value": "{{home_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Unauthorized Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/plans?home_id={{home_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plans"],
+              "query": [
+                {
+                  "key": "home_id",
+                  "value": "{{home_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid Plan ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/plan/invalid_plan_id",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "invalid_plan_id"]
+            }
+          }
+        },
+        {
+          "name": "Malformed JSON",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"home_id\": \"{{home_id}}\",\n  \"date\": \"2025-01-29\",\n  \"mode\": \"focus\",\n  // Invalid JSON comment\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/plan/generate",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "plan", "generate"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

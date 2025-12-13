@@ -10,6 +10,8 @@ pub mod real_printable_service;
 pub mod real_lookup_service;
 pub mod cleanflow_optimizer;
 pub mod cleanflow_suggestion_service;
+pub mod home_extraction_service;
+pub mod plan_generator;
 
 pub use plan_service::PlanService;
 pub use printable_service::PrintableService;
@@ -23,3 +25,8 @@ pub use cleanflow_optimizer::{CleanFlowOptimizer, OptimizationMode, DbCleanFlowO
 pub use cleanflow_suggestion_service::{
     CleanFlowSuggestionService, LlmSuggestionService, Suggestion as DomainSuggestion,
 };
+pub use home_extraction_service::{
+    HomeExtractionService, LlmHomeExtractionService,
+    ExtractedHomeData, ExtractHomeRequest, ExtractHomeResponse, ConversationMessage,
+};
+pub use plan_generator::{PlanGenerator, LlmPlanGenerator, GeneratedPlan, PlanGenerationRequest};

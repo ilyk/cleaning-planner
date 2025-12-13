@@ -1,0 +1,398 @@
+# CleanFlow - Smart Adaptive Cleaning Planner
+
+## 🌟 App Overview
+
+**CleanFlow** is a smart, flexible home-cleaning planner designed for people who struggle to stay focused or organized. It combines intelligent scheduling, paper-based checklists, and optional family collaboration — all powered by adaptive learning.
+
+### Core Philosophy
+CleanFlow isn't just a cleaning app — it's a **companion for focus and calm**. It adapts to your lifestyle, respects your pace, and supports everyone in the home — from kids learning responsibility to adults finding balance and flow.
+
+## 🏠 Core Features
+
+### 1. Smart Home Setup
+During setup, users specify:
+- Home size (number of rooms, floors, outdoor areas)
+- Pets (cats, dogs, etc.)
+- Cleaning devices (robot vacuum, etc.)
+- Custom detail level (minimal or full control)
+
+The app then automatically generates a **personalized cleaning plan**.
+
+### 2. Adaptive Cleaning Plans
+The system produces:
+- **Daily Plan** — short routines to maintain cleanliness
+- **Weekly Plan** — deeper, less frequent tasks
+- **Seasonal/Custom Plans** — spring cleaning, holidays, etc.
+
+Plans adapt dynamically based on:
+- Home configuration
+- Task completion history
+- Personal habits and preferred order
+
+### 3. Learning Engine (AI Behavior Model)
+The app *learns* from your actions:
+- Which tasks you complete, delay, or skip
+- Actual cleaning durations
+- Preferred times and energy patterns
+- Typical comments (e.g., "ran out of detergent")
+
+It then automatically adjusts:
+- Task frequency
+- Time estimates
+- Cleaning order
+- Focus level (shorter or longer sessions)
+
+### 4. Focus & Energy Modes
+- **Focus Mode:** Guided 10–15 minute micro-sessions (Pomodoro style)
+- **Full Reset:** Deep-cleaning mode for weekends
+- **Low Energy Mode:** Light, achievable plan when tired
+- **Pet Mode:** Adjusts routines for homes with animals
+
+## 🖨️ Paper & Hybrid Features
+
+### 5. Printable Daily Plan
+Users can generate a **printable PDF** version of their daily or weekly plan.
+
+Options:
+- Simple or detailed layout
+- With or without QR codes
+- Assignments per person or shared plan
+
+Each printout includes:
+- Tasks grouped by room
+- Checkboxes for "Done / Skipped"
+- Time fields
+- Comment lines
+- Optional **QR codes** for digital tracking
+
+### 6. QR-Based Task Feedback
+Each printed task has a **QR code** linking to a lightweight mobile web form.
+
+When scanned, it opens a form for:
+- Task completion status
+- Time tracking
+- Comments and notes
+
+Data collected from QR submissions updates your stats:
+- Task completion
+- Time accuracy
+- Missing items or notes
+
+This enables effortless syncing from paper → app.
+
+### 7. OCR Scan Import
+After filling out the printed sheet manually:
+- Take a photo or scan it
+- The app's OCR reads:
+  - Checkmarks ("done / skipped")
+  - Written time durations
+  - Comments or issues
+
+AI analyzes the input and updates your learning profile automatically.
+
+## 🧒 Single-Room / Kids Focus Mode
+
+### Purpose
+A mode designed for:
+- **Children** — to make cleaning their own room easy and fun
+- **Teenagers or ADHD users** — to focus on one small, achievable area
+
+### Features
+- "Clean only one room" generator
+- Simple steps with icons and big text
+- Optional timer and visual rewards
+- Printable version with large checkboxes
+- QR codes for marking completion
+- Parents can scan and view progress or notes
+
+## 👨‍👩‍👧‍👦 Family Mode — Shared Home, Shared Plan
+
+### Purpose
+Enable the entire household to share one home setup and divide tasks smoothly.
+
+### Features
+- One shared "Home" profile
+- Multiple family members (with names, colors, or avatars)
+- Automatic or manual task assignment
+- Personal task views ("My plan for today")
+- Combined family progress tracker ("80% done!")
+- Printable overview with everyone's duties
+
+The app tracks:
+- Individual completion history
+- Workload fairness
+- Rotation (e.g., "bathroom duty switches weekly")
+
+## 🎨 3D Avatar System
+
+### Clara - Your AI Cleaning Assistant
+CleanFlow features **Clara**, a 3D avatar assistant that provides personalized cleaning guidance through natural conversation.
+
+### 3D Avatar Features
+- **Real-time 3D Rendering**: SceneView/Filament integration with GLB loading
+- **Skeletal Animation**: Idle loops, blinking, and lip-sync animations
+- **Customizable Avatars**: Import custom .glb files or use bundled Clara
+- **Lip-Sync Technology**: Viseme-based mouth animation synchronized with speech
+- **Performance Optimized**: 60 FPS target with graceful degradation
+- **Offline Support**: Works without internet using bundled Clara GLB
+
+### Avatar Management
+- **Import System**: Support for local .glb files and HTTPS URLs
+- **Asset Validation**: GLB magic bytes check and content hashing
+- **License Tracking**: Documented license notes for imported avatars
+- **Pronunciation Editor**: Customize avatar name pronunciation (Phonetic, IPA, SSML)
+- **Performance Diagnostics**: Real-time FPS, memory, and asset statistics
+
+### Technical Implementation
+- **Provider Abstractions**: Backend-agnostic API for future 3D generation services
+- **Database Integration**: Room database with avatar_assets table
+- **Encrypted Storage**: Avatar preferences stored securely
+- **File Management**: Content hashing and deduplication
+- **Bundled Assets**: Clara GLB (924KB) included in app assets
+
+## 🌍 Multi-Language Support
+
+### Supported Languages
+- **English** (en) - Default
+- **Spanish** (es) - Español
+- **French** (fr) - Français  
+- **German** (de) - Deutsch
+- **Ukrainian** (uk) - Українська
+
+### Language Features
+- **Real-time Switching**: Change language mid-conversation without interruption
+- **Atomic Turn Cancellation**: Prevents mixed language audio/text
+- **Session-based Configuration**: Language settings applied per conversation
+- **Turn Versioning**: Discards stale packets from previous language turns
+- **Clean Switchover**: 300ms transition time between languages
+- **No Duplicate Greetings**: Single greeting per language switch
+
+### Technical Implementation
+- **WebSocket-based**: Language changes sent via session.update
+- **Response Cancellation**: Active responses cancelled before language switch
+- **Local Playback Control**: Audio stopped and flushed during transition
+- **Transcript Management**: Clear old language text before new language
+- **Queuing System**: Rapid language switches handled gracefully
+
+## 🎙️ Realtime Voice Support
+
+### OpenAI Realtime API Integration
+CleanFlow features **bidirectional voice conversation** with Clara using OpenAI's Realtime API.
+
+### Voice Features
+- **Real-time Audio Streaming**: WebSocket-based bidirectional audio
+- **Automatic Turn Detection**: Server-side Voice Activity Detection (VAD)
+- **Simultaneous Transcription**: Real-time speech-to-text for both user and Clara
+- **Low Latency**: 320ms-1s response time (6-12x faster than previous pipeline)
+- **Natural Conversation**: Feels like talking to a real person
+
+### Technical Specifications
+- **Audio Format**: PCM16 (16-bit linear PCM) at 24kHz mono
+- **Transport**: Base64 encoded audio over WebSocket
+- **Turn Detection**: Server-side VAD with 0.5 threshold and 700ms silence duration
+- **Audio Components**: Android AudioRecord for input, AudioTrack for output
+- **State Management**: Comprehensive state tracking (Idle, Connecting, Connected, UserSpeaking, ClaraSpeaking)
+
+### Voice States
+- **Idle**: Ready to start conversation
+- **Connecting**: Establishing WebSocket connection
+- **Connected**: Ready for voice input
+- **UserSpeaking**: User is talking (VAD active)
+- **ClaraSpeaking**: Clara is responding with transcript
+- **SessionComplete**: Conversation ended with full transcript
+- **Error**: Connection or processing error
+
+### WebSocket Messages
+**Input (Client → Server)**:
+- `session.update` - Configure voice, language, instructions
+- `input_audio_buffer.append` - Stream audio chunks
+- `input_audio_buffer.commit` - Finalize audio buffer
+- `response.create` - Request response generation
+
+**Output (Server → Client)**:
+- `response.audio.delta` - Audio chunk from Clara
+- `response.audio_transcript.delta` - Text chunk from Clara
+- `conversation.item.input_audio_transcription.completed` - User's speech transcribed
+- `input_audio_buffer.speech_started/stopped` - VAD events
+
+## 🧠 Intelligence & Motivation
+
+### Dynamic Recommendations
+The app gently suggests improvements:
+- "This task took longer — increase its estimate?"
+- "You ran out of detergent twice this week — add to shopping list?"
+- "You skipped dusting often — merge it into another session?"
+
+### Progress Motivation
+- Visual progress rings per day or family
+- Positive, non-judgmental tone
+- Optional ambient sound or light gamification
+
+## 🎨 Design Philosophy
+- Minimalist, calm interface (Notion + Calm style)
+- Voice commands ("What should I clean today?")
+- Gentle animations and sound cues
+- Never guilt-driven — purely supportive
+
+## ⚙️ Technical Architecture
+
+| Layer | Description |
+|-------|--------------|
+| **Knowledge Graph** | Structured hierarchy of rooms, tasks, frequencies, and contexts |
+| **AI Engine** | Learns from habits, times, and feedback (QR or OCR) |
+| **3D Avatar System** | Real-time rendering with lip-sync and animation |
+| **Realtime Voice API** | WebSocket-based bidirectional audio conversation |
+| **Multi-language Engine** | Atomic language switching with turn cancellation |
+| **Paper Bridge** | PDF generator + QR encoder for hybrid users |
+| **OCR Engine** | Reads physical checklists back into digital data |
+| **Family Sync** | Shared home state with user-based filtering and task assignment |
+| **Offline Support** | QR and local cache work without connection |
+
+## 🔮 Future Expansion
+- NFC task check-ins (tap instead of scan)
+- Smart home integration (robot vacuum, sensors)
+- Advanced voice assistant features
+- Seasonal or thematic cleaning packs
+- Additional language support
+- Community avatar marketplace
+- Advanced lip-sync with ML-based phoneme detection
+
+## 🏗️ Project Structure
+
+### Core Modules
+- **app/**: Main Android application
+- **core/**: Shared utilities and models
+- **data/**: Database, network, and repository layers
+- **feature/clara/**: 3D avatar and voice chat implementation
+
+### Key Technologies
+- **Android**: Kotlin, Jetpack Compose, Room Database
+- **3D Rendering**: SceneView, Filament, GLB format
+- **Voice**: OpenAI Realtime API, WebSocket, PCM audio
+- **AI**: GPT-4o, Whisper STT, OpenAI TTS
+- **Architecture**: MVVM, Hilt DI, StateFlow, Coroutines
+
+---
+
+## 🎨 UI/UX Design Concept
+
+### Overall Style & Feel
+**Design Language:**
+- Minimalist, calm, and elegant
+- Rounded cards, soft gradients, airy spacing
+- Accent color: soft teal or pastel mint
+- Base: off-white and light gray neutrals
+- Typography: Inter or SF Pro
+- Motion: subtle, smooth transitions (no bounce)
+- Positive tone — no guilt colors or warnings
+
+### Core Screens
+
+#### 🏠 Home Screen — "Today's Plan"
+- **Header:** Greeting + progress ring
+- **Main Card:** "🧹 Today's Plan"
+  - "Now": one focus task
+  - "Next up": 3–4 tasks
+  - "Later": optional list
+- **Quick Mode Selector:**
+  - ⚡ Focus, 🌙 Low Energy, 🧼 Full Reset, 🐾 Pet Mode
+- Task chips: emoji, title, estimated time, and status
+
+**Interactions:**
+- Swipe right → Done ✅
+- Swipe left → Skip ⏭️
+- Tap → Task detail
+- Long press → Edit or assign
+- Micro-animation: soft confetti when a task is done
+
+#### 🧩 Task Detail View
+- Task name, icon, and estimated time
+- Buttons: Done, Skip, Postpone
+- Comments bubble with presets
+- "Mark & Next" for fast flow
+- QR icon (if printed task linked)
+- **Motion:** smooth slides, haptic feedback, soft chime
+
+#### 🗓️ Planner Screen
+Tabs: **Daily**, **Weekly**, **Seasonal**, **Custom**
+
+**Layout:**
+- Scrollable timeline grouped by date
+- Task cards per room
+- Floating Action Button: "+ Custom Task"
+
+Modal for adding a task includes:
+- Task name
+- Room
+- Frequency
+- Assignee
+- Save
+
+#### 👨‍👩‍👧‍👦 Family Mode
+- Top toggle: "My Plan" / "Family Plan"
+- Horizontal avatars as filters
+- Central progress ring (family completion %)
+- Color-coded cards for each person
+- "Fairness" chart for workload balance
+- 🖨️ Print button for family plan
+
+#### 🧒 Kids / Single Room Mode
+- Large, colorful emoji cards
+- Voice guidance + success sounds
+- Big "Next" button with tactile animation
+- "Print this plan" option with big checkboxes + QR
+
+#### 🧠 Insights & AI Screen
+- Weekly stats: completion %, total time, streaks
+- Smart suggestions cards ("Adjust schedule?", "Merge tasks?")
+- Accept / Dismiss actions
+- Tone: gentle, encouraging, friendly
+
+#### 🖨️ Paper Bridge
+- Button: "🖨️ Generate PDF"
+- Options: Daily/Weekly, QR codes on/off, layout style
+- Preview thumbnail of printable sheet
+- Scanning a QR → opens mobile form for quick sync
+
+#### ⚙️ Settings & Customization
+Sections:
+- Home Setup
+- Appearance
+- Reminders
+- AI Preferences
+- Account & Family
+- Optional "Paper-first workflow" toggle
+
+### Navigation Structure
+```
+Home (Today)
+ ├─ Task Detail
+ ├─ Focus Mode
+ ├─ Low Energy Mode
+Planner
+ ├─ Daily / Weekly / Seasonal / Custom
+ ├─ Add Task
+Family
+ ├─ Overview / Member Detail
+Kids Mode
+AI / Insights
+Settings
+```
+
+**Bottom Tabs:**
+1. 🏠 Home
+2. 🗓️ Planner
+3. 👨‍👩‍👧‍👦 Family
+4. 🧒 Kids
+5. 🧠 AI
+
+### Transitions & Animations
+- Page transitions: soft slide
+- Task done: checkmark animation
+- Mode change: color hue shift
+- Loading: calm ripple effect
+- Sound cues: soft "click" or "sweep"
+
+---
+
+**CleanFlow** - Making cleaning organized, adaptive, and enjoyable for everyone in the home. 🧹✨

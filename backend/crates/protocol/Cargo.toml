@@ -1,5 +1,5 @@
 [package]
-name = "clara-protocol"
+name = "cleanflow-protocol"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

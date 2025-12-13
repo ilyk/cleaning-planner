@@ -7,7 +7,7 @@ use axum::{
     middleware::Next,
     response::{IntoResponse, Response},
 };
-use clara_domain::services::CachedResponse;
+use cleanflow_domain::services::CachedResponse;
 use tracing::{info, warn};
 
 /// Idempotency key header name

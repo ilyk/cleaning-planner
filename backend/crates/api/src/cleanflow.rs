@@ -5,8 +5,8 @@ use axum::{
     response::Json,
     Extension,
 };
-use clara_auth::AuthExtension;
-use clara_domain::models::{GeneratePlanRequest, GeneratePlanResponse, PlanMode};
+use cleanflow_auth::AuthExtension;
+use cleanflow_domain::models::{GeneratePlanRequest, GeneratePlanResponse, PlanMode};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tracing::info;
@@ -129,8 +129,8 @@ pub async fn optimize_plan(
         .to_lowercase()
         .as_str()
     {
-        "aggressive" => clara_domain::services::OptimizationMode::Aggressive,
-        _ => clara_domain::services::OptimizationMode::Gentle,
+        "aggressive" => cleanflow_domain::services::OptimizationMode::Aggressive,
+        _ => cleanflow_domain::services::OptimizationMode::Gentle,
     };
 
     let response = state

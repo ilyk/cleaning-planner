@@ -1,12 +1,12 @@
 [package]
-name = "clara-llm"
+name = "cleanflow-llm"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-clara-protocol = { path = "../protocol" }
+cleanflow-protocol = { path = "../protocol" }
 tokio = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
@@ -21,7 +21,7 @@ futures = { workspace = true }
 url = "2.5"
 
 [dev-dependencies]
-clara-config = { path = "../config" }
+cleanflow-config = { path = "../config" }
 dotenvy = { workspace = true }
 tracing-subscriber = { workspace = true }
 

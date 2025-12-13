@@ -1,5 +1,5 @@
 [package]
-name = "clara-store"
+name = "cleanflow-store"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

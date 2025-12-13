@@ -1,6 +1,6 @@
 //! Property tests for pagination cursor stability and limits
 
-use clara_domain::pagination::*;
+use cleanflow_domain::pagination::*;
 use proptest::prelude::*;
 use serde_json::json;
 

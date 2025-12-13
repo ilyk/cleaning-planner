@@ -1,7 +1,7 @@
 //! Tool executor
 
 use crate::{capabilities::CapabilityMask, family, plan, printable, telemetry, ToolCall, ToolError, ToolResult};
-use clara_store::Store;
+use cleanflow_store::Store;
 use std::sync::Arc;
 
 /// Tool executor

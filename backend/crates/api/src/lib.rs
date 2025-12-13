@@ -4,6 +4,7 @@ pub mod errors;
 pub mod handlers;
 pub mod idempotency;
 pub mod lookup;
+pub mod onboarding;
 pub mod pagination;
 pub mod plans;
 pub mod routes;

@@ -1,12 +1,16 @@
 //! Real database-backed plan service implementation
 
 use crate::models::*;
-use anyhow::Result;
+use crate::services::plan_generator::{PlanGenerator, PlanGenerationRequest, LlmPlanGenerator};
+use crate::services::real_lookup_service::{RealLookupService, DbLookupService};
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use chrono::NaiveDate;
 use serde_json;
 use sqlx::{PgPool, Row};
 use std::collections::HashMap;
+use std::sync::Arc;
+use tracing::{info, warn};
 
 #[async_trait]
 pub trait RealPlanService: Send + Sync {
@@ -40,11 +44,46 @@ pub trait RealPlanService: Send + Sync {
 /// Database-backed plan service
 pub struct DbPlanService {
     pool: PgPool,
+    plan_generator: Arc<dyn PlanGenerator>,
+    lookup_service: Arc<dyn RealLookupService>,
 }
 
 impl DbPlanService {
     pub fn new(pool: PgPool) -> Self {
-        Self { pool }
+        // Create default services with the pool
+        let lookup_service: Arc<dyn RealLookupService> = Arc::new(DbLookupService::with_pool(pool.clone()));
+        let plan_generator: Arc<dyn PlanGenerator> = Arc::new(LlmPlanGenerator::new(None));
+
+        Self {
+            pool,
+            plan_generator,
+            lookup_service,
+        }
+    }
+
+    /// Create with custom plan generator (for LLM-backed generation)
+    pub fn with_generator(
+        pool: PgPool,
+        plan_generator: Arc<dyn PlanGenerator>,
+        lookup_service: Arc<dyn RealLookupService>,
+    ) -> Self {
+        Self {
+            pool,
+            plan_generator,
+            lookup_service,
+        }
+    }
+
+    /// Create with Anthropic API key for LLM plan generation
+    pub fn with_anthropic(pool: PgPool, anthropic_api_key: Option<String>) -> Self {
+        let lookup_service: Arc<dyn RealLookupService> = Arc::new(DbLookupService::with_pool(pool.clone()));
+        let plan_generator: Arc<dyn PlanGenerator> = Arc::new(LlmPlanGenerator::new(anthropic_api_key));
+
+        Self {
+            pool,
+            plan_generator,
+            lookup_service,
+        }
     }
     
     async fn get_plan_tasks(&self, plan_id: &str) -> Result<Vec<PlanTask>> {
@@ -134,45 +173,53 @@ impl RealPlanService for DbPlanService {
             }
         }
 
-        // Generate new plan
+        // Generate new plan using LLM
         let plan_id = generate_plan_id();
         let version = existing_plan.as_ref().map(|p| p.get::<i32, _>("version") + 1).unwrap_or(1);
-        
-        // Mock plan generation (in real implementation, this would call LLM)
-        let sections = vec![
-            PlanSection {
-                id: "s_now".to_string(),
-                title: "Now".to_string(),
-                tasks: vec!["t_8x1".to_string(), "t_8x2".to_string()],
-            },
-            PlanSection {
-                id: "s_next".to_string(),
-                title: "Next".to_string(),
-                tasks: vec!["t_9p1".to_string()],
-            },
-        ];
-        
-        let tasks = vec![
-            PlanTask {
-                task_id: "t_8x1".to_string(),
-                template_id: Some("tmpl_wipe_counters".to_string()),
-                room_id: "r_kitchen".to_string(),
-                title: "Wipe kitchen counters".to_string(),
-                estimate_min: 7,
-                state: TaskState::Pending,
-                priority: 1,
-                section_id: "s_now".to_string(),
-                assignee: Some(TaskAssignee {
-                    member_id: "m_dad".to_string(),
-                    name: "Alex".to_string(),
-                }),
-                metadata: None,
-            },
-        ];
-        
+
+        // Fetch home profile for plan generation
+        let home_profile = self.lookup_service
+            .get_home(&request.home_id)
+            .await
+            .context("Failed to get home profile")?
+            .ok_or_else(|| anyhow::anyhow!("Home not found: {}", request.home_id))?;
+
+        info!(
+            home_id = %request.home_id,
+            mode = ?request.mode,
+            rooms = home_profile.rooms.len(),
+            members = home_profile.members.len(),
+            "Generating plan with LLM"
+        );
+
+        // Build plan generation request
+        let gen_request = PlanGenerationRequest {
+            home_profile,
+            mode: request.mode,
+            date: request.date,
+            constraints: request.constraints.as_ref().and_then(|c| serde_json::to_value(c).ok()),
+            history_summary: None, // TODO: Fetch history summary for personalization
+        };
+
+        // Generate plan using LLM (or fallback)
+        let generated = self.plan_generator
+            .generate(gen_request)
+            .await
+            .context("Failed to generate plan")?;
+
+        let sections = generated.sections;
+        let tasks = generated.tasks;
+
+        info!(
+            plan_id = %plan_id,
+            sections = sections.len(),
+            tasks = tasks.len(),
+            "Plan generated successfully"
+        );
+
         // Store version strings for reuse
-        let prompt_ver = prompt_version.unwrap_or_else(|| "2025-10-28.3".to_string());
-        let policy_ver = policy_version.unwrap_or_else(|| "2025-10-27.1".to_string());
+        let prompt_ver = prompt_version.unwrap_or_else(|| "2025-12-12.1".to_string());
+        let policy_ver = policy_version.unwrap_or_else(|| "2025-12-12.1".to_string());
 
         // Upsert plan - using runtime query to handle enum cast
         sqlx::query(
