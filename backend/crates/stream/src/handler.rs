@@ -142,6 +142,12 @@ async fn message_loop_with_initial(
     // Subscribe to LLM events
     let mut llm_events = executor.subscribe_llm_events();
 
+    // Send initial greeting to start the conversation
+    // This triggers Clara to greet the user proactively
+    if let Err(e) = executor.send_initial_greeting() {
+        tracing::error!(error = %e, "Failed to send initial greeting");
+    }
+
     // Create channel for sending messages from handler to sender task
     let (tx, mut rx) = mpsc::unbounded_channel::<OutboundMessage>();
 
@@ -161,10 +167,11 @@ async fn message_loop_with_initial(
                 break;
             }
 
-            // Check if we should close after this message
+            // For text chat, don't close on TurnFinish - the conversation continues
+            // The connection stays open for multi-turn chat
             if matches!(msg, OutboundMessage::TurnFinish { .. }) {
-                tracing::debug!("Turn finished, closing sender");
-                break;
+                tracing::debug!("Turn finished, keeping connection open for next turn");
+                // Don't break - keep the connection open
             }
         }
         
@@ -182,6 +189,14 @@ async fn message_loop_with_initial(
                         Ok(Message::Text(text)) => {
                             match serde_json::from_str::<InboundMessage>(&text) {
                                 Ok(inbound) => {
+                                    // Handle Ping specially - respond with Pong immediately
+                                    if matches!(inbound, InboundMessage::Ping) {
+                                        tracing::debug!("Received Ping, sending Pong");
+                                        tx.send(OutboundMessage::Pong).ok();
+                                        heartbeat.record_pong();
+                                        continue;
+                                    }
+
                                     if let Err(e) = handle_inbound_message(
                                         inbound,
                                         executor,
@@ -225,9 +240,11 @@ async fn message_loop_with_initial(
                 Some(outbound) = llm_events.recv() => {
                     let is_finish = matches!(outbound, OutboundMessage::TurnFinish { .. });
                     tx.send(outbound).ok();
-                    
+
+                    // For text chat, don't close on TurnFinish - keep listening for more input
                     if is_finish {
-                        break;
+                        tracing::debug!("Turn finished, waiting for next user input");
+                        // Don't break - continue the receive loop
                     }
                 }
 
@@ -298,6 +315,10 @@ async fn handle_inbound_message(
 
             // Record barge-in stop time
             // metrics.barge_in_stop_ms.observe(stop_time.as_millis() as f64);
+        }
+        InboundMessage::InputText { text, hints: _ } => {
+            tracing::info!(text_len = text.len(), "Processing text input");
+            executor.process_text(&text)?;
         }
         InboundMessage::Ping => {
             heartbeat.record_pong();

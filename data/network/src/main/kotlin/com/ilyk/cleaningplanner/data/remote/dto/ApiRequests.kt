@@ -101,17 +101,36 @@ data class PrintableResult(
 
 @Serializable
 data class CreateSessionRequest(
-    val homeId: String,
-    val userId: String,
+    val homeId: String? = null,
+    val userId: String? = null,
     val capabilities: List<String> = emptyList()
 )
 
 @Serializable
-data class StartTurnRequest(
+data class CreateSessionResponse(
+    @kotlinx.serialization.SerialName("session_id")
     val sessionId: String,
+    @kotlinx.serialization.SerialName("stream_url")
+    val streamUrl: String
+)
+
+@Serializable
+data class StartTurnRequest(
+    @kotlinx.serialization.SerialName("session_id")
+    val sessionId: String,
+    @kotlinx.serialization.SerialName("audio_format")
     val audioFormat: AudioFormat = AudioFormat.OPUS,
+    @kotlinx.serialization.SerialName("sample_rate")
     val sampleRate: Int = 16000,
     val channels: Int = 1
+)
+
+@Serializable
+data class StartTurnResponse(
+    @kotlinx.serialization.SerialName("turn_id")
+    val turnId: String,
+    @kotlinx.serialization.SerialName("stream_url")
+    val streamUrl: String
 )
 
 @Serializable
@@ -122,7 +141,9 @@ enum class AudioFormat {
 
 @Serializable
 data class CancelTurnRequest(
+    @kotlinx.serialization.SerialName("session_id")
     val sessionId: String,
+    @kotlinx.serialization.SerialName("turn_id")
     val turnId: String,
     val reason: String? = null
 )

@@ -36,9 +36,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "CLARA_STREAM_URL", "\"wss://your-production-url.com/v1/clara/stream\"")
+            buildConfigField("String", "CLARA_API_BASE_URL", "\"https://your-production-url.com\"")
         }
         debug {
             isMinifyEnabled = false
+            buildConfigField("String", "CLARA_STREAM_URL", "\"ws://100.101.151.24:8090/v1/clara/stream\"")
+            buildConfigField("String", "CLARA_API_BASE_URL", "\"http://100.101.151.24:8090\"")
         }
     }
 

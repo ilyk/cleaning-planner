@@ -15,7 +15,9 @@ import javax.inject.Singleton
 class PrefsStore @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    
+
+    private val onboardingCompleted = booleanPreferencesKey("onboarding_completed")
+    private val homeId = stringPreferencesKey("home_id")
     private val claraEnabled = booleanPreferencesKey("clara_enabled")
     private val currentMode = stringPreferencesKey("current_mode")
     private val locale = stringPreferencesKey("locale")
@@ -72,4 +74,21 @@ class PrefsStore @Inject constructor(
     val cloudOptInFlow: Flow<Boolean> = dataStore.data.map { prefs ->
         prefs[cloudOptIn] ?: false
     }
+
+    suspend fun setOnboardingCompleted(completed: Boolean, homeId: String? = null) {
+        dataStore.edit { prefs ->
+            prefs[onboardingCompleted] = completed
+            homeId?.let { prefs[this@PrefsStore.homeId] = it }
+        }
+    }
+
+    val isOnboardingCompleted: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[onboardingCompleted] ?: false
+    }
+
+    val homeIdFlow: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[homeId]
+    }
+
+    suspend fun getHomeId(): String? = dataStore.data.first()[homeId]
 }

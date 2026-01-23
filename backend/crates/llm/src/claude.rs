@@ -358,6 +358,171 @@ impl LlmRealtime for ClaudeAdapter {
         Ok(())
     }
 
+    fn send_text(&self, text: &str) -> Result<()> {
+        info!(text_len = text.len(), "Claude adapter: Received text input");
+
+        let text = text.to_string();
+        let conversation_history = self.conversation_history.clone();
+        let event_sender = self.event_sender.clone();
+        let api_key = self.api_key.clone();
+        let model = self.model.clone();
+        let client = self.client.clone();
+
+        // Spawn async task to send to Claude
+        tokio::spawn(async move {
+            // Add user message to history
+            conversation_history.lock().await.push(Message {
+                role: "user".to_string(),
+                content: text,
+            });
+
+            // Get current history for API call
+            let history = conversation_history.lock().await.clone();
+
+            // Send to Claude API
+            let request = MessagesRequest {
+                model: model.clone(),
+                max_tokens: 1024,
+                stream: true,
+                system: CLARA_SYSTEM_PROMPT.to_string(),
+                messages: history.clone(),
+            };
+
+            tracing::info!(model = %model, message_count = history.len(), "Sending request to Claude API (send_text)");
+
+            let response = match client
+                .post("https://api.anthropic.com/v1/messages")
+                .header("x-api-key", &api_key)
+                .header("anthropic-version", "2023-06-01")
+                .header("content-type", "application/json")
+                .json(&request)
+                .send()
+                .await {
+                    Ok(r) => r,
+                    Err(e) => {
+                        tracing::error!(error = %e, "Failed to send request to Claude API");
+                        let sender = event_sender.lock().await;
+                        if let Some(tx) = sender.as_ref() {
+                            tx.send(LlmEvent::Error { message: e.to_string() }).ok();
+                        }
+                        return;
+                    }
+                };
+
+            if !response.status().is_success() {
+                let status = response.status();
+                let body = response.text().await.unwrap_or_default();
+                tracing::error!(status = %status, body = %body, "Claude API error");
+                let sender = event_sender.lock().await;
+                if let Some(tx) = sender.as_ref() {
+                    tx.send(LlmEvent::Error {
+                        message: format!("Claude API error: {} - {}", status, body),
+                    }).ok();
+                }
+                return;
+            }
+
+            // Process SSE stream
+            let mut stream = response.bytes_stream();
+            let mut accumulated_text = String::new();
+            let mut input_tokens: u32 = 0;
+            let mut output_tokens: u32 = 0;
+
+            // Notify output starting
+            {
+                let sender = event_sender.lock().await;
+                if let Some(tx) = sender.as_ref() {
+                    tracing::debug!("Sending OutputAudioStart event");
+                    tx.send(LlmEvent::OutputAudioStart).ok();
+                } else {
+                    tracing::error!("Event sender is None - cannot send OutputAudioStart!");
+                }
+            }
+
+            let mut buffer = String::new();
+
+            while let Some(chunk_result) = stream.next().await {
+                let chunk = match chunk_result {
+                    Ok(c) => c,
+                    Err(e) => {
+                        tracing::error!(error = %e, "Error reading stream chunk");
+                        continue;
+                    }
+                };
+
+                buffer.push_str(&String::from_utf8_lossy(&chunk));
+
+                // Process complete SSE events
+                while let Some(pos) = buffer.find("\n\n") {
+                    let event_str = buffer[..pos].to_string();
+                    buffer = buffer[pos + 2..].to_string();
+
+                    for line in event_str.lines() {
+                        if let Some(data) = line.strip_prefix("data: ") {
+                            if data == "[DONE]" {
+                                continue;
+                            }
+
+                            if let Ok(event) = serde_json::from_str::<StreamEvent>(data) {
+                                match event {
+                                    StreamEvent::ContentBlockDelta { delta, .. } => {
+                                        if let Some(text) = delta.text {
+                                            tracing::info!(text_len = text.len(), text_preview = %text.chars().take(50).collect::<String>(), "Claude: Emitting text delta");
+                                            accumulated_text.push_str(&text);
+                                            let sender = event_sender.lock().await;
+                                            if let Some(tx) = sender.as_ref() {
+                                                if tx.send(LlmEvent::OutputTextDelta { text }).is_err() {
+                                                    tracing::error!("Failed to send text delta - receiver dropped");
+                                                }
+                                            } else {
+                                                tracing::error!("Event sender is None - cannot send text delta!");
+                                            }
+                                        }
+                                    }
+                                    StreamEvent::MessageDelta { usage, .. } => {
+                                        if let Some(u) = usage {
+                                            output_tokens = u.output_tokens.unwrap_or(0);
+                                        }
+                                    }
+                                    StreamEvent::MessageStart { message } => {
+                                        if let Some(u) = message.usage {
+                                            input_tokens = u.input_tokens.unwrap_or(0);
+                                        }
+                                    }
+                                    StreamEvent::MessageStop => {
+                                        // Message complete
+                                    }
+                                    _ => {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add assistant response to history
+            if !accumulated_text.is_empty() {
+                conversation_history.lock().await.push(Message {
+                    role: "assistant".to_string(),
+                    content: accumulated_text.clone(),
+                });
+            }
+
+            // Send turn finished event
+            {
+                let sender = event_sender.lock().await;
+                if let Some(tx) = sender.as_ref() {
+                    tx.send(LlmEvent::Finished {
+                        usage_in: input_tokens,
+                        usage_out: output_tokens,
+                    }).ok();
+                }
+            }
+        });
+
+        Ok(())
+    }
+
     fn commit_input(&self) -> Result<()> {
         info!("Claude adapter: Input committed");
 
@@ -423,10 +588,25 @@ impl LlmRealtime for ClaudeAdapter {
     fn subscribe(&self) -> UnboundedReceiver<LlmEvent> {
         let (tx, rx) = unbounded_channel();
 
+        // Set sender synchronously using try_lock to avoid race condition
+        // This ensures the sender is set before any messages are sent
         let sender = self.event_sender.clone();
-        tokio::spawn(async move {
-            *sender.lock().await = Some(tx);
-        });
+
+        // Use try_lock - in practice, the lock should always be available at subscription time
+        match sender.try_lock() {
+            Ok(mut guard) => {
+                *guard = Some(tx);
+                info!("Claude adapter: Event sender set synchronously");
+            }
+            Err(_) => {
+                // Fallback: spawn but this is a race condition we should fix
+                warn!("Could not set event sender synchronously, using async fallback");
+                let sender_clone = sender.clone();
+                tokio::spawn(async move {
+                    *sender_clone.lock().await = Some(tx);
+                });
+            }
+        }
 
         rx
     }

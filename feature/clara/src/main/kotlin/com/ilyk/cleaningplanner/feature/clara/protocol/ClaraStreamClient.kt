@@ -236,7 +236,29 @@ class ClaraStreamClient(
         }
 
         return try {
-            val jsonString = json.encodeToString(message)
+            // Serialize each message type directly to avoid polymorphic serialization issues
+            // (the sealed class discriminator conflicts with our 'type' property)
+            val jsonString = when (message) {
+                is Ping -> json.encodeToString(Ping.serializer(), message)
+                is Pong -> json.encodeToString(Pong.serializer(), message)
+                is TurnStart -> json.encodeToString(TurnStart.serializer(), message)
+                is TurnCancel -> json.encodeToString(TurnCancel.serializer(), message)
+                is TurnFinish -> json.encodeToString(TurnFinish.serializer(), message)
+                is InputAudioDelta -> json.encodeToString(InputAudioDelta.serializer(), message)
+                is InputAudioCommit -> json.encodeToString(InputAudioCommit.serializer(), message)
+                is InputInterrupt -> json.encodeToString(InputInterrupt.serializer(), message)
+                is InputText -> json.encodeToString(InputText.serializer(), message)
+                is OutputAudioStart -> json.encodeToString(OutputAudioStart.serializer(), message)
+                is OutputAudioDelta -> json.encodeToString(OutputAudioDelta.serializer(), message)
+                is OutputAudioCommit -> json.encodeToString(OutputAudioCommit.serializer(), message)
+                is OutputTextDelta -> json.encodeToString(OutputTextDelta.serializer(), message)
+                is Suggestions -> json.encodeToString(Suggestions.serializer(), message)
+                is ToolCall -> json.encodeToString(ToolCall.serializer(), message)
+                is ToolResult -> json.encodeToString(ToolResult.serializer(), message)
+                is GuardrailNotice -> json.encodeToString(GuardrailNotice.serializer(), message)
+                is ErrorMessage -> json.encodeToString(ErrorMessage.serializer(), message)
+                is ServerBackpressure -> json.encodeToString(ServerBackpressure.serializer(), message)
+            }
             ws.send(jsonString)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send message", e)
@@ -259,20 +281,24 @@ class ClaraStreamClient(
                         _serverMessages.emit(ClaraServerMessage.Pong(System.currentTimeMillis()))
                     }
                 }
-                "output.audio.start" -> {
+                "turn_started" -> {
+                    // Server acknowledged the turn start - log for debugging
+                    Log.d(TAG, "Turn started acknowledged by server")
+                }
+                "output_audio_start" -> {
                     val msg = json.decodeFromString<OutputAudioStart>(text)
                     telemetry.recordTTFT() // Time to first token
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.AudioOutputStart(msg)) }
                 }
-                "output.audio.delta" -> {
+                "output_audio_delta" -> {
                     val msg = json.decodeFromString<OutputAudioDelta>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.AudioOutput(msg)) }
                 }
-                "output.audio.commit" -> {
+                "output_audio_commit" -> {
                     val msg = json.decodeFromString<OutputAudioCommit>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.AudioOutputCommit(msg)) }
                 }
-                "output.text.delta" -> {
+                "output_text_delta" -> {
                     val msg = json.decodeFromString<OutputTextDelta>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.TextOutput(msg)) }
                 }
@@ -280,24 +306,24 @@ class ClaraStreamClient(
                     val msg = json.decodeFromString<Suggestions>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.SuggestionsReceived(msg)) }
                 }
-                "tool.call" -> {
+                "tool_call" -> {
                     val msg = json.decodeFromString<ToolCall>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.ToolCallReceived(msg)) }
                 }
-                "tool.result" -> {
+                "tool_result" -> {
                     val msg = json.decodeFromString<ToolResult>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.ToolResultReceived(msg)) }
                 }
-                "guardrail.notice" -> {
+                "guardrail_notice" -> {
                     val msg = json.decodeFromString<GuardrailNotice>(text)
                     telemetry.recordGuardrailHit()
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.GuardrailNoticeReceived(msg)) }
                 }
-                "server.backpressure" -> {
+                "server_backpressure" -> {
                     val msg = json.decodeFromString<ServerBackpressure>(text)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.BackpressureReceived(msg)) }
                 }
-                "turn.finish" -> {
+                "turn_finish" -> {
                     val msg = json.decodeFromString<TurnFinish>(text)
                     telemetry.recordTurnComplete(msg.usage?.tokensIn ?: 0, msg.usage?.tokensOut ?: 0)
                     coroutineScope.launch { _serverMessages.emit(ClaraServerMessage.TurnFinished(msg)) }

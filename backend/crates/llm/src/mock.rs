@@ -89,6 +89,13 @@ impl LlmRealtime for MockLlmAdapter {
         Ok(())
     }
 
+    fn send_text(&self, text: &str) -> Result<()> {
+        tracing::info!(text_len = text.len(), "Mock LLM: Received text input");
+        // Simulate a response
+        self.simulate_output()?;
+        Ok(())
+    }
+
     fn commit_input(&self) -> Result<()> {
         tracing::info!("Mock LLM: Input committed");
 

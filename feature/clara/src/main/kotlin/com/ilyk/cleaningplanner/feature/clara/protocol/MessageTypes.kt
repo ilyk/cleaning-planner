@@ -25,9 +25,11 @@ sealed class ClaraMessage {
 
 @Serializable
 data class TurnStart(
-    override val type: String = "turn.start",
+    override val type: String = "turn_start",
     override val ts: Long = System.currentTimeMillis(),
+    @kotlinx.serialization.SerialName("session_id")
     val sessionId: String,
+    @kotlinx.serialization.SerialName("turn_id")
     val turnId: String,
     val input: InputMode,
     val locale: String = "en-US"
@@ -40,23 +42,28 @@ data class InputMode(
 
 @Serializable
 data class TurnCancel(
-    override val type: String = "turn.cancel",
+    override val type: String = "turn_cancel",
     override val ts: Long = System.currentTimeMillis(),
+    @kotlinx.serialization.SerialName("turn_id")
     val turnId: String
 ) : ClaraMessage()
 
 @Serializable
 data class TurnFinish(
-    override val type: String = "turn.finish",
+    override val type: String = "turn_finish",
     override val ts: Long = System.currentTimeMillis(),
+    @kotlinx.serialization.SerialName("turn_id")
     val turnId: String,
     val usage: Usage? = null,
+    @kotlinx.serialization.SerialName("latency_ms")
     val latencyMs: Long? = null
 ) : ClaraMessage()
 
 @Serializable
 data class Usage(
+    @kotlinx.serialization.SerialName("tokens_in")
     val tokensIn: Int,
+    @kotlinx.serialization.SerialName("tokens_out")
     val tokensOut: Int
 )
 
@@ -78,7 +85,7 @@ data class Pong(
 
 @Serializable
 data class InputAudioDelta(
-    override val type: String = "input.audio.delta",
+    override val type: String = "input_audio_delta",
     override val ts: Long = System.currentTimeMillis(),
     val seq: Int,
     val format: String, // "opus@24000/mono/20ms"
@@ -88,14 +95,14 @@ data class InputAudioDelta(
 
 @Serializable
 data class InputAudioCommit(
-    override val type: String = "input.audio.commit",
+    override val type: String = "input_audio_commit",
     override val ts: Long = System.currentTimeMillis(),
     val seq: Int
 ) : ClaraMessage()
 
 @Serializable
 data class InputInterrupt(
-    override val type: String = "input.interrupt",
+    override val type: String = "input_interrupt",
     override val ts: Long = System.currentTimeMillis()
 ) : ClaraMessage()
 
@@ -105,7 +112,7 @@ data class InputInterrupt(
 
 @Serializable
 data class InputText(
-    override val type: String = "input.text",
+    override val type: String = "input_text",
     override val ts: Long = System.currentTimeMillis(),
     val text: String,
     val hints: TextHints? = null
@@ -122,14 +129,16 @@ data class TextHints(
 
 @Serializable
 data class OutputAudioStart(
-    override val type: String = "output.audio.start",
+    override val type: String = "output_audio_start",
     override val ts: Long = System.currentTimeMillis(),
-    val turnId: String
+    @kotlinx.serialization.SerialName("turn_id")
+    val turnId: String? = null,
+    val format: String? = null
 ) : ClaraMessage()
 
 @Serializable
 data class OutputAudioDelta(
-    override val type: String = "output.audio.delta",
+    override val type: String = "output_audio_delta",
     override val ts: Long = System.currentTimeMillis(),
     val seq: Int,
     val format: String, // "pcm16@24000/mono"
@@ -138,14 +147,14 @@ data class OutputAudioDelta(
 
 @Serializable
 data class OutputAudioCommit(
-    override val type: String = "output.audio.commit",
+    override val type: String = "output_audio_commit",
     override val ts: Long = System.currentTimeMillis(),
     val seq: Int
 ) : ClaraMessage()
 
 @Serializable
 data class OutputTextDelta(
-    override val type: String = "output.text.delta",
+    override val type: String = "output_text_delta",
     override val ts: Long = System.currentTimeMillis(),
     val text: String
 ) : ClaraMessage()
@@ -163,8 +172,9 @@ data class Suggestions(
 
 @Serializable
 data class ToolCall(
-    override val type: String = "tool.call",
+    override val type: String = "tool_call",
     override val ts: Long = System.currentTimeMillis(),
+    @kotlinx.serialization.SerialName("call_id")
     val callId: String,
     val tool: String,
     val args: JsonElement
@@ -172,8 +182,9 @@ data class ToolCall(
 
 @Serializable
 data class ToolResult(
-    override val type: String = "tool.result",
+    override val type: String = "tool_result",
     override val ts: Long = System.currentTimeMillis(),
+    @kotlinx.serialization.SerialName("call_id")
     val callId: String,
     val result: JsonElement
 ) : ClaraMessage()
@@ -184,7 +195,7 @@ data class ToolResult(
 
 @Serializable
 data class GuardrailNotice(
-    override val type: String = "guardrail.notice",
+    override val type: String = "guardrail_notice",
     override val ts: Long = System.currentTimeMillis(),
     val code: String,
     val message: String
@@ -201,6 +212,7 @@ data class ErrorMessage(
     val code: String,
     val message: String,
     val retryable: Boolean = false,
+    @kotlinx.serialization.SerialName("retry_after_ms")
     val retryAfterMs: Long? = null
 ) : ClaraMessage()
 
@@ -210,7 +222,7 @@ data class ErrorMessage(
 
 @Serializable
 data class ServerBackpressure(
-    override val type: String = "server.backpressure",
+    override val type: String = "server_backpressure",
     override val ts: Long = System.currentTimeMillis(),
     val level: String // "high", "medium", "low"
 ) : ClaraMessage()

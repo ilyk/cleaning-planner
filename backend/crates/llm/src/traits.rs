@@ -47,6 +47,9 @@ pub trait LlmRealtime: Send + Sync {
     /// Send audio chunk to LLM
     fn send_audio_chunk(&self, data: &[u8], format: &str) -> Result<()>;
 
+    /// Send text input to LLM
+    fn send_text(&self, text: &str) -> Result<()>;
+
     /// Commit input audio (end of user speech)
     fn commit_input(&self) -> Result<()>;
 

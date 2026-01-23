@@ -2,7 +2,6 @@ package com.ilyk.cleaningplanner.data.remote.api
 
 import com.ilyk.cleaningplanner.data.remote.dto.*
 import com.ilyk.cleaningplanner.domain.model.ClaraSession
-import com.ilyk.cleaningplanner.domain.model.ClaraTurn
 import retrofit2.http.*
 
 /**
@@ -12,10 +11,10 @@ import retrofit2.http.*
 interface ClaraApi {
 
     @POST("/v1/clara/session")
-    suspend fun createSession(@Body request: CreateSessionRequest): ClaraSession
+    suspend fun createSession(@Body request: CreateSessionRequest): CreateSessionResponse
 
     @POST("/v1/clara/session/turn")
-    suspend fun startTurn(@Body request: StartTurnRequest): ClaraTurn
+    suspend fun startTurn(@Body request: StartTurnRequest): StartTurnResponse
 
     @POST("/v1/clara/cancel")
     suspend fun cancel(@Body request: CancelTurnRequest)

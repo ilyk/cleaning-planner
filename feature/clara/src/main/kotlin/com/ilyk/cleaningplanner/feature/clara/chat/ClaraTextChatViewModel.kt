@@ -66,13 +66,15 @@ class ClaraTextChatViewModel @Inject constructor(
                     capabilities = listOf("text") // Text-only for onboarding
                 )
 
-                val session = claraApi.createSession(sessionRequest)
-                Log.i(TAG, "Session created: ${session.id}")
+                val sessionResponse = claraApi.createSession(sessionRequest)
+                val sessionId = sessionResponse.sessionId
+                Log.i(TAG, "Session created: $sessionId")
 
                 // Start a turn
-                val turnRequest = StartTurnRequest(sessionId = session.id)
-                val turn = claraApi.startTurn(turnRequest)
-                Log.i(TAG, "Turn started: ${turn.id}")
+                val turnRequest = StartTurnRequest(sessionId = sessionId)
+                val turnResponse = claraApi.startTurn(turnRequest)
+                val turnId = turnResponse.turnId
+                Log.i(TAG, "Turn started: $turnId")
 
                 // Create WebSocket client and connect
                 streamClient = streamClientFactory.create(viewModelScope)
@@ -82,18 +84,18 @@ class ClaraTextChatViewModel @Inject constructor(
                 subscribeToServerMessages(client)
 
                 // Connect to WebSocket (construct URL from session)
-                val streamUrl = buildStreamUrl(session.id)
-                client.connect(streamUrl, session.id, turn.id)
+                val streamUrl = buildStreamUrl(sessionId, turnId)
+                client.connect(streamUrl, sessionId, turnId)
 
                 // Start the turn on WebSocket
-                client.startTurn(session.id, turn.id, "text")
+                client.startTurn(sessionId, turnId, "text")
 
                 _uiState.update {
                     it.copy(
                         isConnecting = false,
                         isConnected = true,
-                        sessionId = session.id,
-                        turnId = turn.id
+                        sessionId = sessionId,
+                        turnId = turnId
                     )
                 }
 
@@ -116,10 +118,9 @@ class ClaraTextChatViewModel @Inject constructor(
         }
     }
 
-    private fun buildStreamUrl(sessionId: String): String {
-        // Construct WebSocket URL from base URL
-        // 10.0.2.2 is the Android emulator alias for host machine's localhost
-        return "ws://10.0.2.2:8090/v1/clara/stream?session=$sessionId"
+    private fun buildStreamUrl(sessionId: String, turnId: String): String {
+        // Tailscale IP for physical device testing
+        return "ws://100.101.151.24:8090/v1/clara/stream?sessionId=$sessionId&turnId=$turnId"
     }
 
     private fun subscribeToServerMessages(client: ClaraStreamClient) {

@@ -1,5 +1,4 @@
-package com.ilyk.cleaningplanner.data.network.di
-
+import com.ilyk.cleaningplanner.data.network.BuildConfig
 import com.ilyk.cleaningplanner.data.remote.api.*
 import com.ilyk.cleaningplanner.data.network.api.CleanFlowApi
 import com.ilyk.cleaningplanner.data.remote.interceptor.CommonHeadersInterceptor
@@ -88,8 +87,7 @@ object NetworkModule {
     @Singleton
     @javax.inject.Named("baseUrl")
     fun provideBaseUrl(): String {
-        // 10.0.2.2 is the Android emulator alias for host machine's localhost
-        return "http://10.0.2.2:8090" // Clara backend server
+        return BuildConfig.CLARA_API_BASE_URL
     }
     
     @Provides
@@ -134,7 +132,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideTokenProvider(): () -> String {
-        // TODO: Implement proper token management
-        return { "mock-token" }
+        // Dev token for testing - bypasses auth in dev mode
+        return { "dev-token" }
     }
 }

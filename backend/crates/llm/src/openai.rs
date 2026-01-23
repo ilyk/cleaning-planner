@@ -248,6 +248,12 @@ impl LlmRealtime for OpenAiRealtimeAdapter {
         Ok(())
     }
 
+    fn send_text(&self, text: &str) -> Result<()> {
+        info!(text_len = text.len(), "OpenAI adapter: Received text input (not implemented)");
+        // OpenAI realtime API is audio-focused, text input would need a different approach
+        Ok(())
+    }
+
     fn commit_input(&self) -> Result<()> {
         info!("Committing input to OpenAI");
 

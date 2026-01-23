@@ -50,8 +50,23 @@ pub enum InboundMessage {
     /// Interrupt ongoing output (barge-in)
     InputInterrupt,
 
+    /// Text input from user
+    InputText {
+        /// The text message
+        text: String,
+        /// Optional hints for processing
+        hints: Option<TextHints>,
+    },
+
     /// Heartbeat ping
     Ping,
+}
+
+/// Hints for text processing
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TextHints {
+    /// Optional mode hint (e.g., "focus")
+    pub mode: Option<String>,
 }
 
 /// Outbound messages from server to client

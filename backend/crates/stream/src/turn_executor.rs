@@ -135,6 +135,23 @@ impl TurnExecutor {
         Ok(())
     }
 
+    /// Process text input from client
+    pub fn process_text(&mut self, text: &str) -> anyhow::Result<()> {
+        tracing::info!(turn_id = self.turn_id, text_len = text.len(), "Processing text input");
+        self.llm.send_text(text)?;
+        Ok(())
+    }
+
+    /// Send initial greeting to start the conversation
+    /// Called automatically when a new turn starts to have Clara greet the user
+    pub fn send_initial_greeting(&mut self) -> anyhow::Result<()> {
+        tracing::info!(turn_id = self.turn_id, "Sending initial greeting");
+        // Send a trigger message that prompts Clara to start the conversation
+        // The system prompt already tells Clara how to greet users
+        self.llm.send_text("[Start the onboarding conversation. Greet the user warmly and introduce yourself.]")?;
+        Ok(())
+    }
+
     /// Interrupt (barge-in)
     pub fn interrupt(&mut self) -> anyhow::Result<Instant> {
         let interrupt_start = Instant::now();
@@ -195,6 +212,7 @@ impl TurnExecutor {
                         tx.send(msg).ok();
                     }
                     LlmEvent::OutputTextDelta { text } => {
+                        tracing::debug!(turn_id = turn_id, text_len = text.len(), "Received text delta from LLM");
                         let msg = OutboundMessage::OutputTextDelta { text };
                         tx.send(msg).ok();
                     }
@@ -241,7 +259,8 @@ impl TurnExecutor {
                             "Turn finished"
                         );
 
-                        break;
+                        // Don't break for text chat - keep listening for more events
+                        // The LLM receiver will continue to receive events for subsequent turns
                     }
                 }
             }
