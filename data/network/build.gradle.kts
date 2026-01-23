@@ -10,9 +10,16 @@ android {
     namespace = "com.ilyk.cleaningplanner.data.network"
     compileSdk = 35
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Clara API base URL - use Tailscale IP for physical device testing
+        buildConfigField("String", "CLARA_API_BASE_URL", "\"http://100.101.151.24:8090\"")
     }
 
     compileOptions {

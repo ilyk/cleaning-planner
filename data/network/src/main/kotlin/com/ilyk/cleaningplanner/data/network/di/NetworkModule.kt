@@ -1,3 +1,5 @@
+package com.ilyk.cleaningplanner.data.network.di
+
 import com.ilyk.cleaningplanner.data.network.BuildConfig
 import com.ilyk.cleaningplanner.data.remote.api.*
 import com.ilyk.cleaningplanner.data.network.api.CleanFlowApi
