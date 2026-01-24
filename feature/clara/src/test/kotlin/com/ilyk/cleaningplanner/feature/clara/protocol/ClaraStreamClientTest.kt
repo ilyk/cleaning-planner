@@ -4,6 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import okhttp3.OkHttpClient
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -22,12 +23,19 @@ import java.util.concurrent.TimeUnit
 class ClaraStreamClientTest {
 
     private lateinit var client: ClaraStreamClient
+    private lateinit var okHttpClient: OkHttpClient
 
     @Before
     fun setup() {
-        // Mock auth token
+        // Create a test OkHttpClient with appropriate timeouts
+        okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+
         client = ClaraStreamClient(
-            authToken = "test-token",
+            okHttpClient = okHttpClient,
             coroutineScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Unconfined)
         )
     }

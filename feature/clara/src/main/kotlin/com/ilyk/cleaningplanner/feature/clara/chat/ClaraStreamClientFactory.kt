@@ -2,6 +2,7 @@ package com.ilyk.cleaningplanner.feature.clara.chat
 
 import com.ilyk.cleaningplanner.feature.clara.protocol.ClaraStreamClient
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,15 +16,17 @@ interface ClaraStreamClientFactory {
 
 /**
  * Default implementation that creates ClaraStreamClient instances.
+ * Uses the configured OkHttpClient which includes the CommonHeadersInterceptor
+ * for authentication headers.
  */
 @Singleton
 class DefaultClaraStreamClientFactory @Inject constructor(
-    private val authTokenProvider: () -> String
+    private val okHttpClient: OkHttpClient
 ) : ClaraStreamClientFactory {
 
     override fun create(scope: CoroutineScope): ClaraStreamClient {
         return ClaraStreamClient(
-            authToken = authTokenProvider(),
+            okHttpClient = okHttpClient,
             coroutineScope = scope
         )
     }

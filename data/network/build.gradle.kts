@@ -18,8 +18,8 @@ android {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Clara API base URL - use Tailscale IP for physical device testing
-        buildConfigField("String", "CLARA_API_BASE_URL", "\"http://100.101.151.24:8090\"")
+        // Clara API base URL - use local network IP for testing
+        buildConfigField("String", "CLARA_API_BASE_URL", "\"http://192.168.86.78:8090\"")
     }
 
     compileOptions {

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Clara Streaming Protocol v0.1 - Android WebSocket Client
- * 
+ *
  * Handles:
  * - WebSocket connection lifecycle
  * - Heartbeat (ping/pong) every 10s
@@ -30,26 +30,17 @@ import java.util.concurrent.atomic.AtomicLong
  * - Automatic reconnection with retry logic
  */
 class ClaraStreamClient(
-    private val authToken: String,
+    private val okHttpClient: OkHttpClient,
     private val coroutineScope: CoroutineScope
 ) {
     companion object {
         private const val TAG = "ClaraStreamClient"
-        private const val CONNECT_TIMEOUT_SEC = 10L
-        private const val READ_TIMEOUT_SEC = 60L
-        private const val WRITE_TIMEOUT_SEC = 30L
     }
 
-    private val json = Json { 
+    private val json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
     }
-
-    private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
-        .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
-        .writeTimeout(WRITE_TIMEOUT_SEC, TimeUnit.SECONDS)
-        .build()
 
     private var webSocket: WebSocket? = null
     private var heartbeatJob: Job? = null
@@ -105,7 +96,6 @@ class ClaraStreamClient(
 
         val request = Request.Builder()
             .url(streamUrl)
-            .addHeader("Authorization", "Bearer $authToken")
             .addHeader("Accept-Protocol", ProtocolConstants.PROTOCOL_VERSION)
             .build()
 
