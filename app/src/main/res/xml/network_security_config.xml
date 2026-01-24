@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Allow cleartext for Tailscale IPs (100.x.x.x) during development -->
+    <!-- Allow cleartext for local development IPs -->
     <domain-config cleartextTrafficPermitted="true">
+        <!-- Tailscale IP -->
         <domain includeSubdomains="true">100.101.151.24</domain>
+        <!-- Local network IP -->
+        <domain includeSubdomains="true">192.168.86.78</domain>
         <!-- Emulator localhost alias -->
         <domain includeSubdomains="true">10.0.2.2</domain>
         <!-- Local development -->
