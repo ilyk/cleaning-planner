@@ -3,6 +3,7 @@ package com.ilyk.cleaningplanner.feature.clara.chat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ilyk.cleaningplanner.data.network.BuildConfig
 import com.ilyk.cleaningplanner.data.remote.api.ClaraApi
 import com.ilyk.cleaningplanner.data.remote.dto.ConversationMessage
 import com.ilyk.cleaningplanner.data.remote.dto.CreateSessionRequest
@@ -119,8 +120,9 @@ class ClaraTextChatViewModel @Inject constructor(
     }
 
     private fun buildStreamUrl(sessionId: String, turnId: String): String {
-        // Tailscale IP for physical device testing
-        return "ws://100.101.151.24:8090/v1/clara/stream?sessionId=$sessionId&turnId=$turnId"
+        // Convert HTTP base URL to WebSocket URL
+        val wsBaseUrl = BuildConfig.CLARA_API_BASE_URL.replace("http://", "ws://")
+        return "$wsBaseUrl/v1/clara/stream?sessionId=$sessionId&turnId=$turnId"
     }
 
     private fun subscribeToServerMessages(client: ClaraStreamClient) {
