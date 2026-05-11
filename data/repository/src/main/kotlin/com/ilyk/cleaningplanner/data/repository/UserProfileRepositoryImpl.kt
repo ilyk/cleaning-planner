@@ -1,7 +1,7 @@
 package com.ilyk.cleaningplanner.data.repository
 
-import com.ilyk.cleaningplanner.core.model.domain.UserProfile
-import com.ilyk.cleaningplanner.core.model.domain.Preference
+import com.ilyk.cleaningplanner.domain.model.UserProfile
+import com.ilyk.cleaningplanner.domain.model.Preference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -3,7 +3,7 @@ package com.ilyk.cleaningplanner.ui.home
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ilyk.cleaningplanner.core.model.domain.*
+import com.ilyk.cleaningplanner.domain.model.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

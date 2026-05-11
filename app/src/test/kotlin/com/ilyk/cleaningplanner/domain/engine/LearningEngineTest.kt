@@ -1,6 +1,7 @@
 package com.ilyk.cleaningplanner.domain.engine
 
-import com.ilyk.cleaningplanner.core.model.domain.*
+import com.ilyk.cleaningplanner.domain.model.*
+import com.ilyk.cleaningplanner.core.model.TaskStatus
 import kotlinx.datetime.LocalDate
 import org.junit.Test
 import org.junit.Assert.*
@@ -30,12 +31,9 @@ class LearningEngineTest {
         val task = Task(
             id = "new_task",
             title = "New Task",
-            room = "kitchen",
-            estimatedMin = 15,
-            assigneeId = null,
-            dueDate = LocalDate(2024, 1, 1),
-            timeOfDay = TimeOfDay.Morning,
-            status = TaskStatus.Pending
+            priority = TaskPriority.NOW,
+            estimatedDurationMinutes = 15,
+            roomId = "kitchen"
         )
 
         val adjustedEstimate = learningEngine.adjustedEstimate(task)
@@ -48,12 +46,9 @@ class LearningEngineTest {
         val task = Task(
             id = "task1",
             title = "Task 1",
-            room = "kitchen",
-            estimatedMin = 15,
-            assigneeId = null,
-            dueDate = LocalDate(2024, 1, 1),
-            timeOfDay = TimeOfDay.Morning,
-            status = TaskStatus.Pending
+            priority = TaskPriority.NOW,
+            estimatedDurationMinutes = 15,
+            roomId = "kitchen"
         )
 
         // Record successful completion with shorter duration

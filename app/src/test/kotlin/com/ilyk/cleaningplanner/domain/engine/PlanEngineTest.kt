@@ -1,6 +1,7 @@
 package com.ilyk.cleaningplanner.domain.engine
 
-import com.ilyk.cleaningplanner.core.model.domain.*
+import com.ilyk.cleaningplanner.domain.model.*
+import com.ilyk.cleaningplanner.core.model.TaskStatus
 import kotlinx.datetime.LocalDate
 import org.junit.Test
 import org.junit.Assert.*
@@ -22,12 +23,12 @@ class PlanEngineTest {
         val history = emptyList<HistoryEntry>()
         val date = LocalDate(2024, 1, 1)
 
-        val result = planEngine.generateDailyPlan(profile, history, Mode.Focus, date)
+        val result = planEngine.generateDailyPlan(profile, history, CleaningMode.FOCUS, date)
 
         assertTrue("Should generate tasks", result.isNotEmpty())
-        assertTrue("All tasks should be 15 minutes or less", result.all { it.estimatedMin <= 15 })
-        assertTrue("Should have tasks for each room", result.any { it.room == "kitchen" })
-        assertTrue("Should have tasks for each room", result.any { it.room == "bathroom" })
+        assertTrue("All tasks should be 15 minutes or less", result.all { it.estimatedDurationMinutes <= 15 })
+        assertTrue("Should have tasks for each room", result.any { it.roomId == "kitchen" })
+        assertTrue("Should have tasks for each room", result.any { it.roomId == "bathroom" })
     }
 
     @Test
@@ -43,7 +44,7 @@ class PlanEngineTest {
         val history = emptyList<HistoryEntry>()
         val date = LocalDate(2024, 1, 1)
 
-        val result = planEngine.generateDailyPlan(profile, history, Mode.PetMode, date)
+        val result = planEngine.generateDailyPlan(profile, history, CleaningMode.PET_MODE, date)
 
         assertTrue("Should include pet-related tasks", result.any { it.title.contains("pet", ignoreCase = true) })
     }
@@ -61,8 +62,8 @@ class PlanEngineTest {
         val history = emptyList<HistoryEntry>()
         val date = LocalDate(2024, 1, 1)
 
-        val fullResetResult = planEngine.generateDailyPlan(profile, history, Mode.FullReset, date)
-        val lowEnergyResult = planEngine.generateDailyPlan(profile, history, Mode.LowEnergy, date)
+        val fullResetResult = planEngine.generateDailyPlan(profile, history, CleaningMode.FULL_RESET, date)
+        val lowEnergyResult = planEngine.generateDailyPlan(profile, history, CleaningMode.LOW_ENERGY, date)
 
         assertTrue("LowEnergy should have fewer tasks", lowEnergyResult.size < fullResetResult.size)
     }

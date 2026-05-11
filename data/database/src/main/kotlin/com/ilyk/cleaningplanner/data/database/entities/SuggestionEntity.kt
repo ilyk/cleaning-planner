@@ -2,8 +2,8 @@ package com.ilyk.cleaningplanner.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ilyk.cleaningplanner.core.model.domain.SuggestionAction
-import com.ilyk.cleaningplanner.core.model.domain.SuggestionSource
+import com.ilyk.cleaningplanner.domain.model.SuggestionAction
+import com.ilyk.cleaningplanner.domain.model.SuggestionSource
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
@@ -21,7 +21,7 @@ data class SuggestionEntity(
     val createdAt: Long = System.currentTimeMillis()
 ) {
     companion object {
-        fun fromModel(suggestion: com.ilyk.cleaningplanner.core.model.domain.Suggestion): SuggestionEntity {
+        fun fromModel(suggestion: com.ilyk.cleaningplanner.domain.model.Suggestion): SuggestionEntity {
             return SuggestionEntity(
                 id = suggestion.id,
                 text = suggestion.text,
@@ -30,7 +30,7 @@ data class SuggestionEntity(
                 source = suggestion.source,
                 targetJson = suggestion.target?.let { 
                     kotlinx.serialization.json.Json.encodeToString(
-                        com.ilyk.cleaningplanner.core.model.domain.SuggestionTarget.serializer(),
+                        com.ilyk.cleaningplanner.domain.model.SuggestionTarget.serializer(),
                         it
                     )
                 },
@@ -41,22 +41,22 @@ data class SuggestionEntity(
             )
         }
         
-        fun toModel(entity: SuggestionEntity): com.ilyk.cleaningplanner.core.model.domain.Suggestion {
+        fun toModel(entity: SuggestionEntity): com.ilyk.cleaningplanner.domain.model.Suggestion {
             val target = entity.targetJson?.let {
                 kotlinx.serialization.json.Json.decodeFromString(
-                    com.ilyk.cleaningplanner.core.model.domain.SuggestionTarget.serializer(),
+                    com.ilyk.cleaningplanner.domain.model.SuggestionTarget.serializer(),
                     it
                 )
             }
             
-            return com.ilyk.cleaningplanner.core.model.domain.Suggestion(
+            return com.ilyk.cleaningplanner.domain.model.Suggestion(
                 id = entity.id,
                 text = entity.text,
                 confidence = entity.confidence,
                 action = entity.action,
                 source = entity.source,
                 target = target,
-                state = com.ilyk.cleaningplanner.core.model.domain.SuggestionState(
+                state = com.ilyk.cleaningplanner.domain.model.SuggestionState(
                     accepted = entity.isAccepted,
                     dismissed = entity.isDismissed,
                     appliedLocally = entity.appliedLocally

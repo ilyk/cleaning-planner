@@ -1,4 +1,5 @@
 package com.ilyk.cleaningplanner.ui.home.modes
+import com.ilyk.cleaningplanner.domain.model.status
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -21,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ilyk.cleaningplanner.core.model.domain.Task
+import com.ilyk.cleaningplanner.domain.model.Task
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 
 /**
@@ -35,13 +36,13 @@ fun FullResetModeScreen(
     modifier: Modifier = Modifier
 ) {
     // Group tasks by room
-    val tasksByRoom = tasks.groupBy { it.room }
+    val tasksByRoom = tasks.groupBy { it.roomId ?: "Other" }
     val completedRooms = tasksByRoom.count { (_, tasks) -> 
         tasks.all { it.status == TaskStatus.Done }
     }
     val totalRooms = tasksByRoom.size
     val progress = if (totalRooms > 0) completedRooms.toFloat() / totalRooms else 0f
-    val totalTime = tasks.sumOf { it.estimatedMin }
+    val totalTime = tasks.sumOf { it.estimatedDurationMinutes }
     
     var expandedRooms by remember { mutableStateOf(setOf<String>()) }
     
@@ -408,7 +409,7 @@ fun FullResetTaskItem(
                 .padding(horizontal = 10.dp, vertical = 4.dp)
         ) {
             Text(
-                text = "${task.estimatedMin} min",
+                text = "${task.estimatedDurationMinutes} min",
                 fontSize = 12.sp,
                 color = if (isDone) Color(0xFF718096) else Color(0xFF3A7AFE),
                 fontWeight = FontWeight.Medium

@@ -1,6 +1,7 @@
 package com.ilyk.cleaningplanner.domain.engine
 
-import com.ilyk.cleaningplanner.core.model.domain.*
+import com.ilyk.cleaningplanner.domain.model.*
+import com.ilyk.cleaningplanner.core.model.TaskStatus
 import kotlinx.datetime.LocalDate
 import org.junit.Test
 import org.junit.Assert.*

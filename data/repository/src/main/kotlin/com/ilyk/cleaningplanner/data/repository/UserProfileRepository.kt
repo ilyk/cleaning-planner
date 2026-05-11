@@ -1,6 +1,6 @@
 package com.ilyk.cleaningplanner.data.repository
 
-import com.ilyk.cleaningplanner.core.model.domain.UserProfile
+import com.ilyk.cleaningplanner.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
 interface UserProfileRepository {

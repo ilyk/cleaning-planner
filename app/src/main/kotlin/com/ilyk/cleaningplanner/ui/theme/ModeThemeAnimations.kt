@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.Color
-import com.ilyk.cleaningplanner.core.model.domain.Mode
+import com.ilyk.cleaningplanner.domain.model.CleaningMode
 
 /**
  * Animate mode theme tokens with smooth transitions
  */
 @Composable
-fun animateModeTokens(targetMode: Mode): ModeThemeTokens {
+fun animateModeTokens(targetMode: CleaningMode): ModeThemeTokens {
     val baseTokens = tokensFor(targetMode)
     
     // Animate primary color

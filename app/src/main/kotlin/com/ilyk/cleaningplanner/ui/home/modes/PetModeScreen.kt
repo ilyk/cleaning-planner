@@ -1,4 +1,5 @@
 package com.ilyk.cleaningplanner.ui.home.modes
+import com.ilyk.cleaningplanner.domain.model.status
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -20,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ilyk.cleaningplanner.core.model.domain.Task
+import com.ilyk.cleaningplanner.domain.model.Task
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 
 /**
@@ -344,7 +345,7 @@ fun PetModeTaskCard(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "${task.room} · ${task.estimatedMin} min",
+                        text = "${task.roomId} · ${task.estimatedDurationMinutes} min",
                         fontSize = 13.sp,
                         color = Color(0xFF718096)
                     )

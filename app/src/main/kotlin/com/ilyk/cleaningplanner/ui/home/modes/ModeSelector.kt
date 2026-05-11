@@ -18,15 +18,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.ilyk.cleaningplanner.core.model.domain.Mode
+import com.ilyk.cleaningplanner.domain.model.CleaningMode
 
 /**
  * Floating mode selector button that opens a dialog
  */
 @Composable
 fun FloatingModeSelector(
-    currentMode: Mode,
-    onModeChange: (Mode) -> Unit,
+    currentMode: CleaningMode,
+    onModeChange: (CleaningMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -73,8 +73,8 @@ fun FloatingModeSelector(
  */
 @Composable
 fun ModeSelectorDialog(
-    currentMode: Mode,
-    onModeChange: (Mode) -> Unit,
+    currentMode: CleaningMode,
+    onModeChange: (CleaningMode) -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
@@ -113,10 +113,10 @@ fun ModeSelectorDialog(
                 
                 // Mode options
                 val modes = listOf(
-                    Triple(Mode.Focus, "⚡ Focus Mode", "Quick wins & momentum"),
-                    Triple(Mode.FullReset, "🧼 Full Reset", "Deep clean mission control"),
-                    Triple(Mode.LowEnergy, "🌙 Low Energy", "Gentle guidance"),
-                    Triple(Mode.PetMode, "🐾 Pet Mode", "Playful & pet-aware")
+                    Triple(CleaningMode.FOCUS, "⚡ Focus Mode", "Quick wins & momentum"),
+                    Triple(CleaningMode.FULL_RESET, "🧼 Full Reset", "Deep clean mission control"),
+                    Triple(CleaningMode.LOW_ENERGY, "🌙 Low Energy", "Gentle guidance"),
+                    Triple(CleaningMode.PET_MODE, "🐾 Pet Mode", "Playful & pet-aware")
                 )
                 
                 modes.forEach { (mode, title, description) ->
@@ -216,11 +216,11 @@ fun ModeDialogOption(
 /**
  * Get emoji for a mode
  */
-fun getModeEmoji(mode: Mode): String = when (mode) {
-    Mode.Focus -> "⚡"
-    Mode.FullReset -> "🧼"
-    Mode.LowEnergy -> "🌙"
-    Mode.PetMode -> "🐾"
+fun getModeEmoji(mode: CleaningMode): String = when (mode) {
+    CleaningMode.FOCUS -> "⚡"
+    CleaningMode.FULL_RESET -> "🧼"
+    CleaningMode.LOW_ENERGY -> "🌙"
+    CleaningMode.PET_MODE -> "🐾"
 }
 
 

@@ -2,9 +2,9 @@ package com.ilyk.cleaningplanner.data.repository
 
 import com.ilyk.cleaningplanner.domain.model.CleaningMode
 import com.ilyk.cleaningplanner.domain.model.Plan
+import com.ilyk.cleaningplanner.domain.model.UserProfile
 import com.ilyk.cleaningplanner.data.remote.api.PlansApi
 import com.ilyk.cleaningplanner.data.network.api.CleanFlowApi
-import com.ilyk.cleaningplanner.core.model.domain.UserProfile
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
@@ -17,7 +17,7 @@ import com.ilyk.cleaningplanner.data.database.entities.PendingOpEntity
 import com.ilyk.cleaningplanner.data.database.entities.HistoryEntryEntity
 import com.ilyk.cleaningplanner.data.network.api.HistoryEntryPayload
 import com.ilyk.cleaningplanner.data.network.api.HistoryBatchRequest
-import com.ilyk.cleaningplanner.core.model.domain.HistoryOrigin
+import com.ilyk.cleaningplanner.domain.model.HistoryOrigin
 import com.ilyk.cleaningplanner.data.remote.dto.CompleteTaskRequest
 import com.ilyk.cleaningplanner.data.remote.dto.SkipTaskRequest
 import com.ilyk.cleaningplanner.data.remote.dto.AssignTaskRequest

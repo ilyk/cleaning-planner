@@ -1,8 +1,8 @@
 package com.ilyk.cleaningplanner.data.repository
 
-import com.ilyk.cleaningplanner.core.model.domain.Suggestion
-import com.ilyk.cleaningplanner.core.model.domain.SuggestionAction
-import com.ilyk.cleaningplanner.core.model.domain.SuggestionSource
+import com.ilyk.cleaningplanner.domain.model.Suggestion
+import com.ilyk.cleaningplanner.domain.model.SuggestionAction
+import com.ilyk.cleaningplanner.domain.model.SuggestionSource
 import com.ilyk.cleaningplanner.data.database.dao.SuggestionDao
 import com.ilyk.cleaningplanner.data.database.entities.SuggestionEntity
 import com.ilyk.cleaningplanner.data.network.api.CleanFlowApi
@@ -76,13 +76,13 @@ class SuggestionRepositoryImpl @Inject constructor(
                     source = if (payload.source == "cloud_ai") SuggestionSource.CloudAI else SuggestionSource.LocalAI,
                     target = payload.target?.let { targetJson ->
                         // Parse target from JsonObject
-                        com.ilyk.cleaningplanner.core.model.domain.SuggestionTarget(
+                        com.ilyk.cleaningplanner.domain.model.SuggestionTarget(
                             taskId = targetJson["task_id"]?.toString()?.trim('"'),
                             field = targetJson["field"]?.toString()?.trim('"'),
                             proposedValue = targetJson["proposed_value"] as? kotlinx.serialization.json.JsonObject
                         )
                     },
-                    state = com.ilyk.cleaningplanner.core.model.domain.SuggestionState(
+                    state = com.ilyk.cleaningplanner.domain.model.SuggestionState(
                         accepted = payload.state.accepted,
                         dismissed = payload.state.dismissed,
                         appliedLocally = payload.state.appliedLocally

@@ -1,4 +1,4 @@
-package com.ilyk.cleaningplanner.core.model.domain
+package com.ilyk.cleaningplanner.domain.model
 
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 import kotlinx.datetime.LocalDate

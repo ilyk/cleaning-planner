@@ -1,4 +1,5 @@
 package com.ilyk.cleaningplanner.ui.home.modes
+import com.ilyk.cleaningplanner.domain.model.status
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -20,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ilyk.cleaningplanner.core.model.domain.Task
+import com.ilyk.cleaningplanner.domain.model.Task
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 
 /**
@@ -37,7 +38,7 @@ fun FocusModeScreen(
     val completedCount = tasks.count { it.status == TaskStatus.Done }
     val totalCount = tasks.size
     val progress = if (totalCount > 0) completedCount.toFloat() / totalCount else 0f
-    val totalTime = tasks.sumOf { it.estimatedMin }
+    val totalTime = tasks.sumOf { it.estimatedDurationMinutes }
     
     val currentTask = tasks.firstOrNull { it.status == TaskStatus.Pending }
     val nextTasks = tasks.filter { it.status == TaskStatus.Pending }.drop(1).take(3)
@@ -247,7 +248,7 @@ fun CurrentTaskCard(
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "${task.room} · ${task.estimatedMin} min",
+                    text = "${task.roomId} · ${task.estimatedDurationMinutes} min",
                     fontSize = 14.sp,
                     color = Color(0xFF718096)
                 )
@@ -333,7 +334,7 @@ fun NextUpTaskCard(task: Task) {
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "${task.estimatedMin} min",
+                        text = "${task.estimatedDurationMinutes} min",
                         fontSize = 12.sp,
                         color = Color(0xFF38B2AC),
                         fontWeight = FontWeight.Medium

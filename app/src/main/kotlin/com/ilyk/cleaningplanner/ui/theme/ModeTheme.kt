@@ -6,7 +6,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ilyk.cleaningplanner.core.model.domain.Mode
+import com.ilyk.cleaningplanner.domain.model.CleaningMode
 
 /**
  * Haptic feedback style per mode
@@ -99,11 +99,11 @@ object ModeThemes {
 /**
  * Get tokens for a specific mode
  */
-fun tokensFor(mode: Mode) = when (mode) {
-    Mode.Focus -> ModeThemes.Focus
-    Mode.LowEnergy -> ModeThemes.LowEnergy
-    Mode.FullReset -> ModeThemes.FullReset
-    Mode.PetMode -> ModeThemes.PetMode
+fun tokensFor(mode: CleaningMode) = when (mode) {
+    CleaningMode.FOCUS -> ModeThemes.Focus
+    CleaningMode.LOW_ENERGY -> ModeThemes.LowEnergy
+    CleaningMode.FULL_RESET -> ModeThemes.FullReset
+    CleaningMode.PET_MODE -> ModeThemes.PetMode
 }
 
 /**
@@ -140,8 +140,8 @@ data class ModeBehaviors(
 /**
  * Get behaviors for a specific mode
  */
-fun behaviorsFor(mode: Mode) = when (mode) {
-    Mode.Focus -> ModeBehaviors(
+fun behaviorsFor(mode: CleaningMode) = when (mode) {
+    CleaningMode.FOCUS -> ModeBehaviors(
         maxTaskDurationMin = 15,
         limitTaskCount = null,
         extraTags = emptySet(),
@@ -149,7 +149,7 @@ fun behaviorsFor(mode: Mode) = when (mode) {
         bannerMessage = "Quick Wins Mode",
         bannerSubtext = "All tasks under 15 minutes"
     )
-    Mode.LowEnergy -> ModeBehaviors(
+    CleaningMode.LOW_ENERGY -> ModeBehaviors(
         maxTaskDurationMin = null,
         limitTaskCount = 5,
         extraTags = setOf("easy", "light"),
@@ -157,7 +157,7 @@ fun behaviorsFor(mode: Mode) = when (mode) {
         bannerMessage = "Low Energy Mode",
         bannerSubtext = "Taking it easy with light tasks"
     )
-    Mode.FullReset -> ModeBehaviors(
+    CleaningMode.FULL_RESET -> ModeBehaviors(
         maxTaskDurationMin = null,
         limitTaskCount = null,
         extraTags = setOf("deep"),
@@ -165,7 +165,7 @@ fun behaviorsFor(mode: Mode) = when (mode) {
         bannerMessage = "Deep Clean Mode",
         bannerSubtext = "Full reset with all tasks"
     )
-    Mode.PetMode -> ModeBehaviors(
+    CleaningMode.PET_MODE -> ModeBehaviors(
         maxTaskDurationMin = null,
         limitTaskCount = null,
         extraTags = setOf("pet", "pet-safe"),

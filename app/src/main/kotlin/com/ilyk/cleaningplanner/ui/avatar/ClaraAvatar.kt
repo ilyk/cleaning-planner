@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 
 sealed interface ClaraEvent {
     object TaskCompleted : ClaraEvent
-    data class ModeChanged(val mode: com.ilyk.cleaningplanner.core.model.domain.Mode) : ClaraEvent
+    data class ModeChanged(val mode: com.ilyk.cleaningplanner.domain.model.CleaningMode) : ClaraEvent
     object SuggestionAccepted : ClaraEvent
     object StreakMilestone : ClaraEvent
     object WelcomeComplete : ClaraEvent

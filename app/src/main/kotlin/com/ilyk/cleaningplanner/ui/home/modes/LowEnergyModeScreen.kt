@@ -1,4 +1,5 @@
 package com.ilyk.cleaningplanner.ui.home.modes
+import com.ilyk.cleaningplanner.domain.model.status
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -20,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ilyk.cleaningplanner.core.model.domain.Task
+import com.ilyk.cleaningplanner.domain.model.Task
 import com.ilyk.cleaningplanner.core.model.TaskStatus
 
 /**
@@ -36,7 +37,7 @@ fun LowEnergyModeScreen(
     // Show only 3 easiest tasks
     val easyTasks = tasks
         .filter { it.status == TaskStatus.Pending }
-        .sortedBy { it.estimatedMin }
+        .sortedBy { it.estimatedDurationMinutes }
         .take(3)
     
     val completedCount = easyTasks.count { it.status == TaskStatus.Done }
@@ -275,7 +276,7 @@ fun LowEnergyTaskCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "${task.room} · ${task.estimatedMin} min",
+                        text = "${task.roomId} · ${task.estimatedDurationMinutes} min",
                         fontSize = 14.sp,
                         color = Color(0xFF718096)
                     )

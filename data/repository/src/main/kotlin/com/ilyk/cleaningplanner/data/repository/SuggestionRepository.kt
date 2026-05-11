@@ -1,6 +1,6 @@
 package com.ilyk.cleaningplanner.data.repository
 
-import com.ilyk.cleaningplanner.core.model.domain.Suggestion
+import com.ilyk.cleaningplanner.domain.model.Suggestion
 import kotlinx.coroutines.flow.Flow
 
 interface SuggestionRepository {
