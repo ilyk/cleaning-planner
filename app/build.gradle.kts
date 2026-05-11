@@ -79,15 +79,7 @@ dependencies {
     implementation(project(":data:repository"))
 
     // Feature modules
-    implementation(project(":feature:auth"))
     implementation(project(":feature:clara"))
-    implementation(project(":feature:household"))
-    implementation(project(":feature:rooms"))
-    implementation(project(":feature:qr"))
-    implementation(project(":feature:kidmode"))
-    implementation(project(":feature:board"))
-    implementation(project(":feature:printables"))
-    implementation(project(":feature:settings"))
     implementation(project(":feature:setup"))
 
     // AndroidX Core

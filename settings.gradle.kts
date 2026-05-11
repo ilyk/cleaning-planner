@@ -29,18 +29,7 @@ include(":data:database")
 include(":data:network")
 include(":data:repository")
 
-// Feature modules
-include(":feature:auth")
+// Feature modules — only modules with real Kotlin source.
 include(":feature:clara")
-include(":feature:household")
-include(":feature:rooms")
-include(":feature:qr")
-include(":feature:kidmode")
-include(":feature:board")
-include(":feature:printables")
-include(":feature:settings")
 include(":feature:setup")
-
-// Testing
-include(":testing:core")
 
