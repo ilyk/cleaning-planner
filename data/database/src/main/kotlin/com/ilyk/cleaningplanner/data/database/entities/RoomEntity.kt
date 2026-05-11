@@ -4,8 +4,16 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.ilyk.cleaningplanner.core.model.RoomX
 
+/**
+ * Local Room-DB representation of a room.
+ *
+ * Schema retained for backward compatibility with the legacy `householdId` /
+ * `qrSlug` / `order` flow. The v1 backend exposes a `Room` shape with
+ * `home_id` / `kind` / `metadata`; when a UI screen first needs offline
+ * caching for Rooms, this entity will get a schema migration to align with
+ * the backend columns.
+ */
 @Entity(
     tableName = "rooms",
     foreignKeys = [
@@ -29,20 +37,3 @@ data class RoomEntity(
     val qrSlug: String,
     val order: Int
 )
-
-fun RoomEntity.toModel() = RoomX(
-    id = id,
-    householdId = householdId,
-    name = name,
-    qrSlug = qrSlug,
-    order = order
-)
-
-fun RoomX.toEntity() = RoomEntity(
-    id = id,
-    householdId = householdId,
-    name = name,
-    qrSlug = qrSlug,
-    order = order
-)
-

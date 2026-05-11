@@ -1,64 +1,47 @@
 package com.ilyk.cleaningplanner.data.repository
 
 import com.ilyk.cleaningplanner.core.common.result.Result
-import com.ilyk.cleaningplanner.core.model.RoomX
-import com.ilyk.cleaningplanner.data.database.dao.RoomDao
-import com.ilyk.cleaningplanner.data.database.entities.toEntity
-import com.ilyk.cleaningplanner.data.database.entities.toModel
-import com.ilyk.cleaningplanner.data.network.api.CreateRoomRequest
-import com.ilyk.cleaningplanner.data.network.api.RoomApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import com.ilyk.cleaningplanner.data.remote.api.RoomsApi
+import com.ilyk.cleaningplanner.data.remote.dto.CreateRoomRequestV1
+import com.ilyk.cleaningplanner.data.remote.dto.UpdateRoomRequestV1
+import com.ilyk.cleaningplanner.domain.model.Room
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Rooms repository — talks to the v1 backend via [RoomsApi].
+ *
+ * Network-only at this stage. Offline-first caching (Room DAO write-through, observe flows)
+ * is deferred to W6 (Planner) where a UI screen first consumes these reads. The current
+ * `RoomEntity` schema is keyed on legacy `householdId` / `qrSlug` / `order` columns that
+ * do not map to the backend's `home_id` / `kind` / `metadata` shape — caching honestly
+ * requires a schema migration that belongs with the consuming screen's PR.
+ */
 @Singleton
 class RoomRepository @Inject constructor(
-    private val roomDao: RoomDao,
-    private val roomApi: RoomApi
+    private val roomsApi: RoomsApi
 ) {
-    
-    fun observeRooms(householdId: String): Flow<List<RoomX>> {
-        return roomDao.observeAll(householdId).map { entities ->
-            entities.map { it.toModel() }
-        }
-    }
 
-    suspend fun getByQrSlug(qrSlug: String): Result<RoomX> {
-        return try {
-            // Try local first
-            val localRoom = roomDao.getByQrSlug(qrSlug)
-            if (localRoom != null) {
-                return Result.Success(localRoom.toModel())
-            }
+    suspend fun list(homeId: String): Result<List<Room>> =
+        runCatching { roomsApi.list(homeId) }.toResult()
 
-            // Fetch from network
-            val room = roomApi.getByQrSlug(qrSlug)
-            roomDao.insert(room.toEntity())
-            Result.Success(room)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
+    suspend fun get(roomId: String): Result<Room> =
+        runCatching { roomsApi.get(roomId) }.toResult()
 
-    suspend fun createRoom(request: CreateRoomRequest): Result<RoomX> {
-        return try {
-            val room = roomApi.create(request)
-            roomDao.insert(room.toEntity())
-            Result.Success(room)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
+    suspend fun create(request: CreateRoomRequestV1): Result<Room> =
+        runCatching { roomsApi.create(request) }.toResult()
 
-    suspend fun syncFromNetwork(householdId: String): Result<Unit> {
-        return try {
-            val rooms = roomApi.list(householdId)
-            roomDao.insertAll(rooms.map { it.toEntity() })
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
+    suspend fun update(roomId: String, request: UpdateRoomRequestV1): Result<Room> =
+        runCatching { roomsApi.update(roomId, request) }.toResult()
+
+    suspend fun delete(roomId: String): Result<Unit> =
+        runCatching {
+            roomsApi.delete(roomId)
+            Unit
+        }.toResult()
 }
 
+private fun <T> kotlin.Result<T>.toResult(): Result<T> = fold(
+    onSuccess = { Result.Success(it) },
+    onFailure = { Result.Error(it) }
+)

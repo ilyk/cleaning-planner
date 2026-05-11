@@ -121,6 +121,24 @@ object NetworkModule {
     fun provideCleanFlowApi(retrofit: Retrofit): CleanFlowApi {
         return retrofit.create(CleanFlowApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideHouseholdsApi(retrofit: Retrofit): HouseholdsApi {
+        return retrofit.create(HouseholdsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoomsApi(retrofit: Retrofit): RoomsApi {
+        return retrofit.create(RoomsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTasksApi(retrofit: Retrofit): TasksApi {
+        return retrofit.create(TasksApi::class.java)
+    }
     
     @Provides
     @Singleton
