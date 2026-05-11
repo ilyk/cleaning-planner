@@ -358,8 +358,11 @@ mod tests {
             categories: vec![],
             confidence: 0.0,
             redactions: vec![],
+            risk_class: None,
+            capabilities: vec![],
+            events: vec![],
         }, &categories, 0.0);
-        
+
         assert_eq!(risk, RiskClass::R0);
         assert_eq!(action, Action::Allow);
         assert!(caps.contains(&Capability::AllowChat));
@@ -374,8 +377,11 @@ mod tests {
             categories: categories.clone(),
             confidence: 0.8,
             redactions: vec![],
+            risk_class: None,
+            capabilities: vec![],
+            events: vec![],
         }, &categories, 0.8);
-        
+
         assert_eq!(risk, RiskClass::R3);
         assert_eq!(action, Action::Block);
         assert!(caps.contains(&Capability::HardBlock));
@@ -390,8 +396,11 @@ mod tests {
             categories: categories.clone(),
             confidence: 0.7,
             redactions: vec![],
+            risk_class: None,
+            capabilities: vec![],
+            events: vec![],
         }, &categories, 0.7);
-        
+
         assert_eq!(risk, RiskClass::R2);
         assert!(action == Action::Mask || action == Action::Downgrade);
         assert!(caps.contains(&Capability::DenyTools));

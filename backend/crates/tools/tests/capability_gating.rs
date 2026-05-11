@@ -2,6 +2,12 @@
 //!
 //! Validates that tool execution respects capability tokens
 //! and guardrail action outcomes.
+//!
+//! Gated on the `use-path-security` feature because `cleanflow-oss-integrations`
+//! is an optional dependency. Run with:
+//!     cargo test -p cleanflow-tools --features use-path-security
+
+#![cfg(feature = "use-path-security")]
 
 use cleanflow_oss_integrations::capabilities_adapter::{
     Capability, CapabilitiesProvider, CapabilityToken,

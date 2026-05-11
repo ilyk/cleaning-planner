@@ -25,4 +25,5 @@ use-pdf = ["dep:printpdf"]
 use-path-security = ["dep:cleanflow-oss-integrations"]
 
 [dev-dependencies]
+tokio = { workspace = true }
 
