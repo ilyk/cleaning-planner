@@ -12,6 +12,8 @@ pub mod cleanflow_optimizer;
 pub mod cleanflow_suggestion_service;
 pub mod home_extraction_service;
 pub mod plan_generator;
+pub mod room_service;
+pub mod home_service;
 
 pub use plan_service::PlanService;
 pub use printable_service::PrintableService;
@@ -30,3 +32,5 @@ pub use home_extraction_service::{
     ExtractedHomeData, ExtractHomeRequest, ExtractHomeResponse, ConversationMessage,
 };
 pub use plan_generator::{PlanGenerator, LlmPlanGenerator, GeneratedPlan, PlanGenerationRequest};
+pub use room_service::{RoomService, DbRoomService};
+pub use home_service::{HomeService, DbHomeService};

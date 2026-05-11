@@ -8,6 +8,7 @@ use cleanflow_domain::services::{
 	DbIdempotencyStore, DbPlanService, CleanFlowOptimizer, DbCleanFlowOptimizer,
 	CleanFlowSuggestionService, LlmSuggestionService,
 	HomeExtractionService, LlmHomeExtractionService,
+	RoomService, DbRoomService, HomeService, DbHomeService,
 };
 use cleanflow_session::SessionManager;
 use cleanflow_store::{Store, DbPool};
@@ -34,6 +35,8 @@ pub struct AppState {
 	pub cleanflow_optimizer: Arc<dyn CleanFlowOptimizer>,
 	pub cleanflow_suggestion_service: Arc<dyn CleanFlowSuggestionService>,
 	pub home_extraction_service: Arc<dyn HomeExtractionService>,
+	pub room_service: Arc<dyn RoomService>,
+	pub home_service: Arc<dyn HomeService>,
 }
 
 impl AppState {
@@ -85,7 +88,11 @@ impl AppState {
 		let anthropic_api_key = config.llm.anthropic_api_key.clone();
 		let home_extraction_service: Arc<dyn HomeExtractionService> =
 			Arc::new(LlmHomeExtractionService::new(db_pool.clone(), anthropic_api_key));
-        
+
+		// Initialize room and home CRUD services
+		let room_service: Arc<dyn RoomService> = Arc::new(DbRoomService::new(db_pool.clone()));
+		let home_service: Arc<dyn HomeService> = Arc::new(DbHomeService::new(db_pool.clone()));
+
         Self {
             config: Arc::new(config),
             jwt_validator: Arc::new(jwt_validator),
@@ -104,6 +111,8 @@ impl AppState {
             cleanflow_optimizer,
             cleanflow_suggestion_service,
             home_extraction_service,
+            room_service,
+            home_service,
         }
     }
 }

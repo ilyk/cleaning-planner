@@ -1,6 +1,6 @@
 //! Router configuration
 
-use crate::{handlers, plans, lookup, cleanflow, cleanflow_history, onboarding, idempotency, state::AppState};
+use crate::{handlers, plans, lookup, cleanflow, cleanflow_history, onboarding, idempotency, rooms, households, state::AppState};
 use axum::{
     middleware,
     routing::{get, post},
@@ -34,6 +34,20 @@ pub fn create_router(state: AppState) -> Router {
             idempotency::idempotency_middleware,
         ));
 
+    // Room CRUD routes (require auth)
+    let room_routes = Router::new()
+        .route("/v1/rooms", get(rooms::list_rooms).post(rooms::create_room))
+        .route("/v1/rooms/:room_id", get(rooms::get_room).put(rooms::update_room).delete(rooms::delete_room));
+
+    // Household CRUD routes (require auth)
+    let household_routes = Router::new()
+        .route("/v1/households", get(households::list_households).post(households::create_household))
+        .route("/v1/households/:home_id", get(households::get_household).put(households::update_household).delete(households::delete_household));
+
+    // Task skip route (require auth)
+    let task_routes = Router::new()
+        .route("/v1/tasks/:task_id/skip", post(plans::skip_task));
+
     // Lookup & CleanFlow API routes (require auth)
     let lookup_routes = Router::new()
         .route("/v1/homes/:home_id", get(lookup::get_home))
@@ -60,6 +74,9 @@ pub fn create_router(state: AppState) -> Router {
     // All protected routes
     let protected_routes = Router::new()
         .merge(plan_routes)
+        .merge(room_routes)
+        .merge(household_routes)
+        .merge(task_routes)
         .merge(lookup_routes)
         .merge(cleanflow_clara_routes)
         .merge(onboarding_routes)

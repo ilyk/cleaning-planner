@@ -15,34 +15,43 @@ use uuid::Uuid;
 pub enum CleanFlowError {
     #[error("Unauthorized: {0}")]
     Unauthorized(String),
-    
+
     #[error("Forbidden: {0}")]
     Forbidden(String),
-    
+
     #[error("Rate limited: {0}")]
     RateLimited(String),
-    
+
     #[error("Validation failed: {0}")]
     ValidationFailed(String),
-    
+
     #[error("Conflict: {0}")]
     Conflict(String),
-    
+
     #[error("Not found: {0}")]
     NotFound(String),
-    
+
     #[error("Plan not found: {0}")]
     PlanNotFound(String),
-    
+
+    #[error("Room not found: {0}")]
+    RoomNotFound(String),
+
+    #[error("Home not found: {0}")]
+    HomeNotFound(String),
+
+    #[error("Task not found: {0}")]
+    TaskNotFound(String),
+
     #[error("Session not found: {0}")]
     SessionNotFound(String),
-    
+
     #[error("Session already connected: {0}")]
     SessionAlreadyConnected(String),
-    
+
     #[error("Invalid request: {0}")]
     InvalidRequest(String),
-    
+
     #[error("Internal error: {0}")]
     Internal(String),
 }
@@ -57,6 +66,9 @@ impl CleanFlowError {
             CleanFlowError::Conflict(_) => ErrorCode::Conflict,
             CleanFlowError::NotFound(_) => ErrorCode::NotFound,
             CleanFlowError::PlanNotFound(_) => ErrorCode::PlanNotFound,
+            CleanFlowError::RoomNotFound(_) => ErrorCode::NotFound,
+            CleanFlowError::HomeNotFound(_) => ErrorCode::NotFound,
+            CleanFlowError::TaskNotFound(_) => ErrorCode::NotFound,
             CleanFlowError::SessionNotFound(_) => ErrorCode::SessionNotFound,
             CleanFlowError::SessionAlreadyConnected(_) => ErrorCode::SessionAlreadyConnected,
             CleanFlowError::InvalidRequest(_) => ErrorCode::InvalidRequest,
@@ -73,6 +85,9 @@ impl CleanFlowError {
             CleanFlowError::Conflict(_) => StatusCode::CONFLICT,
             CleanFlowError::NotFound(_) => StatusCode::NOT_FOUND,
             CleanFlowError::PlanNotFound(_) => StatusCode::NOT_FOUND,
+            CleanFlowError::RoomNotFound(_) => StatusCode::NOT_FOUND,
+            CleanFlowError::HomeNotFound(_) => StatusCode::NOT_FOUND,
+            CleanFlowError::TaskNotFound(_) => StatusCode::NOT_FOUND,
             CleanFlowError::SessionNotFound(_) => StatusCode::NOT_FOUND,
             CleanFlowError::SessionAlreadyConnected(_) => StatusCode::CONFLICT,
             CleanFlowError::InvalidRequest(_) => StatusCode::BAD_REQUEST,
@@ -83,6 +98,9 @@ impl CleanFlowError {
     pub fn details(&self) -> Option<serde_json::Value> {
         match self {
             CleanFlowError::PlanNotFound(plan_id) => Some(json!({ "planId": plan_id })),
+            CleanFlowError::RoomNotFound(room_id) => Some(json!({ "roomId": room_id })),
+            CleanFlowError::HomeNotFound(home_id) => Some(json!({ "homeId": home_id })),
+            CleanFlowError::TaskNotFound(task_id) => Some(json!({ "taskId": task_id })),
             CleanFlowError::SessionNotFound(session_id) => Some(json!({ "sessionId": session_id })),
             CleanFlowError::SessionAlreadyConnected(session_id) => Some(json!({ "sessionId": session_id })),
             _ => None,

@@ -480,3 +480,56 @@ pub fn generate_turn_id() -> String {
 pub fn generate_qr_id() -> String {
     format!("qr_{}", uuid::Uuid::new_v4().to_string()[..8].to_lowercase())
 }
+
+// Room CRUD Request/Response DTOs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CreateRoomRequest {
+    pub home_id: String,
+    pub name: String,
+    pub kind: Option<RoomKind>,
+    pub metadata: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateRoomRequest {
+    pub name: Option<String>,
+    pub kind: Option<RoomKind>,
+    pub metadata: Option<serde_json::Value>,
+}
+
+// Home/Household CRUD Request/Response DTOs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CreateHomeRequest {
+    pub name: String,
+    pub tz: String,
+    pub locale: String,
+    pub metadata: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateHomeRequest {
+    pub name: Option<String>,
+    pub tz: Option<String>,
+    pub locale: Option<String>,
+    pub metadata: Option<serde_json::Value>,
+}
+
+// Task Skip Request/Response DTOs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SkipTaskRequest {
+    pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SkipTaskResponse {
+    pub ok: bool,
+    pub task_id: String,
+    pub new_state: TaskState,
+    pub telemetry_id: String,
+}

@@ -7,12 +7,8 @@ use axum::{
     Extension,
 };
 use cleanflow_auth::AuthExtension;
-use cleanflow_domain::{
-    models::*,
-    services::{PlanService, PrintableService},
-};
+use cleanflow_domain::models::*;
 use serde::Deserialize;
-use std::sync::Arc;
 use tracing::info;
 use crate::state::AppState;
 
@@ -182,4 +178,37 @@ pub struct ListPlansQuery {
     pub date_from: Option<chrono::NaiveDate>,
     pub limit: Option<i32>,
     pub cursor: Option<String>,
+}
+
+/// Skip a task and reschedule
+pub async fn skip_task(
+    State(state): State<AppState>,
+    Extension(auth): Extension<AuthExtension>,
+    Path(task_id): Path<String>,
+    Json(request): Json<SkipTaskRequest>,
+) -> Result<Json<SkipTaskResponse>, crate::errors::CleanFlowError> {
+    info!(
+        user_id = %auth.claims.sub,
+        task_id = %task_id,
+        reason = ?request.reason,
+        "Skipping task"
+    );
+
+    // Record skip via telemetry service
+    let telemetry_request = TelemetryCompleteRequest {
+        task_id: task_id.clone(),
+        status: "skip".to_string(),
+        duration_sec: None,
+        comment: request.reason,
+        source: "api".to_string(),
+    };
+
+    let telemetry_response = state.telemetry_service.record_telemetry(telemetry_request).await?;
+
+    Ok(Json(SkipTaskResponse {
+        ok: true,
+        task_id,
+        new_state: TaskState::Skipped,
+        telemetry_id: telemetry_response.telemetry_id,
+    }))
 }
