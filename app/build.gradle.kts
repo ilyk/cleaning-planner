@@ -88,6 +88,7 @@ dependencies {
     implementation(project(":feature:board"))
     implementation(project(":feature:printables"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:setup"))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
