@@ -271,6 +271,41 @@ class PlanRepository @Inject constructor(
     }
 
     /**
+     * Cache a locally-computed plan (e.g. from PlanEngine via DailyPlanWorker).
+     * Mirror of [getToday]'s cache write path but takes a domain Plan directly.
+     */
+    suspend fun cacheLocalPlan(plan: Plan) {
+        planDao.insert(PlanEntity.fromModel(plan))
+    }
+
+    /**
+     * Build a user-defined task and stamp it with a deterministic local id.
+     * The caller is responsible for layering it into the current plan view —
+     * server-side persistence of custom tasks lands in a follow-up W when the
+     * backend exposes a `POST /v1/plan/custom-task` endpoint. For now the task
+     * lives in memory + the on-disk Plan cache if [cacheLocalPlan] is called.
+     */
+    fun addCustomTask(
+        title: String,
+        roomId: String?,
+        estimatedDurationMinutes: Int,
+        priority: com.ilyk.cleaningplanner.domain.model.TaskPriority,
+        assigneeId: String? = null
+    ): com.ilyk.cleaningplanner.domain.model.Task {
+        val id = "custom-${UUID.randomUUID()}"
+        return com.ilyk.cleaningplanner.domain.model.Task(
+            id = id,
+            title = title,
+            description = null,
+            priority = priority,
+            estimatedDurationMinutes = estimatedDurationMinutes,
+            roomId = roomId,
+            assignedTo = assigneeId,
+            createdAt = Clock.System.now()
+        )
+    }
+
+    /**
      * Reconcile pending operations with server
      */
     suspend fun reconcile(): ReconcileStats {

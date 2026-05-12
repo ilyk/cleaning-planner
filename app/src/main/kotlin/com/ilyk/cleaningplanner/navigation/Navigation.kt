@@ -16,8 +16,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.WorkManager
 import com.ilyk.cleaningplanner.state.PrefsStore
 import com.ilyk.cleaningplanner.ui.components.CleanFlowBottomBar
+import com.ilyk.cleaningplanner.worker.DailyPlanWorker
 import com.ilyk.cleaningplanner.ui.components.CleanFlowTabRoutes
 import com.ilyk.cleaningplanner.ui.home.HomeScreen
 import com.ilyk.cleaningplanner.ui.insights.AiInsightsScreen
@@ -38,13 +40,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NavigationViewModel @Inject constructor(
-    private val prefsStore: PrefsStore
+    private val prefsStore: PrefsStore,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow<String?>(null)
     val startDestination: StateFlow<String?> = _startDestination
 
     init {
+        // Idempotent — `KEEP` policy means re-schedule on every app start is a no-op
+        // once the worker is already enqueued. Worker itself bails early when
+        // `prefsStore.homeIdFlow.first() == null`, so pre-onboarding starts are safe.
+        DailyPlanWorker.schedule(workManager)
+
         viewModelScope.launch {
             val isOnboarded = prefsStore.isOnboardingCompleted.first()
             // Clara is the primary onboarding path. When the user has disabled Clara
