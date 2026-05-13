@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -54,55 +55,65 @@ class KidsViewModel @Inject constructor(
 
     fun onSelectRoom(room: String) {
         val tasksForRoom = filterRoomTasks(_allTasks, room)
-        _uiState.value = _uiState.value.copy(
+        _uiState.update { it.copy(
             selectedRoom = room,
             tasks = tasksForRoom,
             completedIds = emptySet(),
             showCelebration = false
-        )
+        ) }
     }
 
     fun onBackToRoomPicker() {
-        _uiState.value = _uiState.value.copy(
+        _uiState.update { it.copy(
             selectedRoom = null,
             tasks = emptyList(),
             completedIds = emptySet(),
             showCelebration = false
-        )
+        ) }
     }
 
     fun onTaskDone(taskId: String) {
-        val state = _uiState.value
-        if (taskId in state.completedIds) return
-        val newCompleted = state.completedIds + taskId
-        val tasksForRoom = state.tasks
-        val finishedRoom = tasksForRoom.isNotEmpty() && tasksForRoom.all { it.id in newCompleted }
-        _uiState.value = state.copy(
-            completedIds = newCompleted,
-            showCelebration = finishedRoom
-        )
+        // Early-out on already-done is racy in the strict sense (two concurrent calls
+        // could both pass the check) — but [MutableStateFlow.update] uses an atomic
+        // compare-and-set loop, so the resulting `completedIds` set still ends up
+        // correct even if both pass. Worst case the repo sees `markTaskDone(taskId)`
+        // twice, which is idempotent on the server.
+        if (taskId in _uiState.value.completedIds) return
+        _uiState.update { state ->
+            val newCompleted = state.completedIds + taskId
+            val finishedRoom = state.tasks.isNotEmpty() && state.tasks.all { it.id in newCompleted }
+            state.copy(completedIds = newCompleted, showCelebration = finishedRoom)
+        }
         viewModelScope.launch {
             runCatching { planRepository.markTaskDone(taskId) }
         }
     }
 
     fun onDismissCelebration() {
-        _uiState.value = _uiState.value.copy(showCelebration = false)
+        _uiState.update { it.copy(showCelebration = false) }
+    }
+
+    /**
+     * Re-fetches today's plan + room list. Call when the screen regains focus
+     * (e.g. after a Planner custom-task add) so `_allTasks` doesn't go stale.
+     */
+    fun refresh() {
+        loadRooms()
     }
 
     private fun loadRooms() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val homeId = prefsStore.homeIdFlow.first()
             val modeName = prefsStore.currentModeFlow.first()
             val mode = runCatching { CleaningMode.valueOf(modeName) }.getOrDefault(CleaningMode.FOCUS)
             val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
             if (homeId == null) {
-                _uiState.value = _uiState.value.copy(
+                _uiState.update { it.copy(
                     isLoading = false,
                     error = "No home configured — complete onboarding first."
-                )
+                ) }
                 return@launch
             }
 
@@ -110,17 +121,17 @@ class KidsViewModel @Inject constructor(
                 .onSuccess { plan ->
                     _allTasks = plan.tasks
                     val rooms = plan.tasks.mapNotNull { it.roomId }.distinct().take(8)
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isLoading = false,
                         error = null,
                         rooms = rooms
-                    )
+                    ) }
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isLoading = false,
                         error = e.message ?: "Failed to load today's tasks."
-                    )
+                    ) }
                 }
         }
     }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -53,7 +54,7 @@ class PlannerViewModel @Inject constructor(
     }
 
     fun onTabChange(tab: PlannerTab) {
-        _uiState.value = _uiState.value.copy(selectedTab = tab)
+        _uiState.update { it.copy(selectedTab = tab) }
     }
 
     fun refresh() = loadToday()
@@ -70,58 +71,58 @@ class PlannerViewModel @Inject constructor(
             estimatedDurationMinutes = estimatedDurationMinutes.coerceIn(1, 240),
             priority = priority
         )
-        _uiState.value = _uiState.value.copy(customTasks = _uiState.value.customTasks + task)
+        _uiState.update { it.copy(customTasks = it.customTasks + task) }
     }
 
     fun onCompleteTask(taskId: String) {
         viewModelScope.launch {
             runCatching { planRepository.markTaskDone(taskId) }
-                .onFailure { e -> _uiState.value = _uiState.value.copy(error = e.message) }
+                .onFailure { e -> _uiState.update { it.copy(error = e.message) } }
         }
     }
 
     fun onSkipTask(taskId: String) {
         viewModelScope.launch {
             runCatching { planRepository.markTaskSkipped(taskId) }
-                .onFailure { e -> _uiState.value = _uiState.value.copy(error = e.message) }
+                .onFailure { e -> _uiState.update { it.copy(error = e.message) } }
         }
     }
 
     private fun loadToday() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val homeId = prefsStore.homeIdFlow.first()
             val modeName = prefsStore.currentModeFlow.first()
             val mode = runCatching { CleaningMode.valueOf(modeName) }.getOrDefault(CleaningMode.FOCUS)
             val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
             if (homeId == null) {
-                _uiState.value = _uiState.value.copy(
+                _uiState.update { it.copy(
                     isLoading = false,
                     error = "No home configured — complete onboarding first.",
                     mode = mode,
                     today = today
-                )
+                ) }
                 return@launch
             }
 
             runCatching { planRepository.getToday(homeId, today.toString(), mode) }
                 .onSuccess { plan ->
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isLoading = false,
                         error = null,
                         plan = plan,
                         mode = mode,
                         today = today
-                    )
+                    ) }
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isLoading = false,
                         error = e.message ?: "Failed to load today's plan.",
                         mode = mode,
                         today = today
-                    )
+                    ) }
                 }
         }
     }

@@ -10,12 +10,11 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.ilyk.cleaningplanner.data.repository.PlanRepository
+import com.ilyk.cleaningplanner.data.repository.UserProfileRepository
 import com.ilyk.cleaningplanner.domain.engine.PlanEngine
 import com.ilyk.cleaningplanner.domain.model.CleaningMode
 import com.ilyk.cleaningplanner.domain.model.Plan
 import com.ilyk.cleaningplanner.domain.model.PlanMetadata
-import com.ilyk.cleaningplanner.domain.model.Preference
-import com.ilyk.cleaningplanner.domain.model.UserProfile
 import com.ilyk.cleaningplanner.state.PrefsStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -45,7 +44,8 @@ class DailyPlanWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val prefsStore: PrefsStore,
     private val planRepository: PlanRepository,
-    private val planEngine: PlanEngine
+    private val planEngine: PlanEngine,
+    private val userProfileRepository: UserProfileRepository
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -60,16 +60,10 @@ class DailyPlanWorker @AssistedInject constructor(
             // Ensure a plan exists in cache (cheap if one is already there).
             val cached = planRepository.getToday(homeId, todayIso, mode)
 
-            // Synthesize an engine plan from a minimal in-memory profile. Real profile
-            // loading lands when UserProfileRepository starts persisting (W6 follow-up).
-            val profile = UserProfile(
-                name = "",
-                rooms = listOf("kitchen", "bathroom", "bedroom", "living room"),
-                floors = 1,
-                hasPets = false,
-                devices = emptyList(),
-                preference = Preference.Minimalist
-            )
+            // Real UserProfile from the welcome flow (or repo default if onboarding hasn't
+            // populated it yet). Honors rooms / hasPets / preference so PlanEngine produces
+            // user-tailored output instead of a one-size-fits-all hardcoded shape.
+            val profile = userProfileRepository.userProfile.first()
             val engineTasks = planEngine.generateDailyPlan(profile, emptyList(), mode, today)
 
             // Merge: prefer cached plan id/version when present, otherwise build fresh.
