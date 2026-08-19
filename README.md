@@ -1,3 +1,11 @@
+# Repository moved
+
+The active Domovyk codebase now lives in [`redasgard/domovyk-ad790f34`](https://github.com/redasgard/domovyk-ad790f34).
+
+This repository is retained as the historical CleanFlow / pre-Domovyk implementation. Do not use it for current Domovyk builds or releases.
+
+---
+
 # CleanFlow
 
 A smart adaptive cleaning planner for families, featuring AI-assisted onboarding, flexible cleaning modes, and a paper-digital hybrid workflow.
